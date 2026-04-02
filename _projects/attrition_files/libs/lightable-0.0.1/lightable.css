@@ -24,7 +24,6 @@
 .lightable-minimal thead tr:last-child th {
   border-bottom: 2px solid #00000050;
   empty-cells: hide;
-
 }
 
 .lightable-minimal tbody tr:first-child td {
@@ -73,11 +72,11 @@
 }
 
 .lightable-classic thead tr:last-child th {
-  border-bottom: 0.10em solid #111111;
+  border-bottom: 0.1em solid #111111;
 }
 
 .lightable-classic.lightable-hover tbody tr:hover {
-  background-color: #F9EEC1;
+  background-color: #f9eec1;
 }
 
 .lightable-classic.lightable-striped tbody tr:nth-child(even) {
@@ -125,7 +124,7 @@
 }
 
 .lightable-classic-2.lightable-hover tbody tr:hover {
-  background-color: #F9EEC1;
+  background-color: #f9eec1;
 }
 
 .lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
@@ -137,7 +136,7 @@
   white-space: nowrap;
   table-layout: fixed;
   font-family: Roboto, sans-serif;
-  border: 1px solid #EEE;
+  border: 1px solid #eee;
   border-collapse: collapse;
   margin-bottom: 10px;
 }
@@ -147,7 +146,7 @@
 }
 
 .lightable-material tfoot tr:first-child td {
-  border-top: 1px solid #EEE;
+  border-top: 1px solid #eee;
 }
 
 .lightable-material th {
@@ -184,7 +183,7 @@
   white-space: nowrap;
   table-layout: fixed;
   font-family: Roboto, sans-serif;
-  border: 1px solid #FFFFFF12;
+  border: 1px solid #ffffff12;
   border-collapse: collapse;
   margin-bottom: 10px;
   background-color: #363640;
@@ -195,30 +194,30 @@
 }
 
 .lightable-material-dark tfoot tr:first-child td {
-  border-top: 1px solid #FFFFFF12;
+  border-top: 1px solid #ffffff12;
 }
 
 .lightable-material-dark th {
   height: 56px;
   padding-left: 16px;
   padding-right: 16px;
-  color: #FFFFFF60;
+  color: #ffffff60;
 }
 
 .lightable-material-dark td {
   height: 52px;
   padding-left: 16px;
   padding-right: 16px;
-  color: #FFFFFF;
-  border-top: 1px solid #FFFFFF12;
+  color: #ffffff;
+  border-top: 1px solid #ffffff12;
 }
 
 .lightable-material-dark.lightable-hover tbody tr:hover {
-  background-color: #FFFFFF12;
+  background-color: #ffffff12;
 }
 
 .lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
-  background-color: #FFFFFF12;
+  background-color: #ffffff12;
 }
 
 .lightable-material-dark.lightable-striped tbody td {
@@ -226,7 +225,7 @@
 }
 
 .lightable-material-dark.lightable-striped thead tr:last-child th {
-  border-bottom: 1px solid #FFFFFF12;
+  border-bottom: 1px solid #ffffff12;
 }
 
 .lightable-paper {
@@ -259,7 +258,7 @@
 }
 
 .lightable-paper.lightable-hover tbody tr:hover {
-  background-color: #F9EEC1;
+  background-color: #f9eec1;
 }
 
 .lightable-paper.lightable-striped tbody tr:nth-child(even) {
@@ -269,4 +268,3 @@
 .lightable-paper.lightable-striped tbody td {
   border: 0;
 }
-

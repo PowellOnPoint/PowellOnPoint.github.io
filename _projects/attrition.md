@@ -4,8 +4,9 @@ description: "A study on predicting employee attrition using IBM attrition datas
 img: assets/img/attrition.jpg
 collection: projects
 permalink: /projects/modeling-attrition/
-date: 2026-03-30   # or keep the dynamic date
+date: 2026-03-30 # or keep the dynamic date
 ---
+
 <script src="attrition_files/libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="attrition_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
@@ -84,7 +85,7 @@ executive summary
 
 # 1. Import
 
-``` r
+```r
 data <- read.csv('CaseStudy1-data.csv')
 dim(data)
 summary(data)
@@ -92,19 +93,19 @@ summary(data)
 
 # 2. Tidy
 
-``` r
+```r
 sum(is.na(data))
 ```
 
     [1] 0
 
-``` r
+```r
 sum(is.null(data))
 ```
 
     [1] 0
 
-``` r
+```r
 for (col in names(data)) {
   if (is.character(data[[col]])) {
     cat("Unique values in", col, ":\n")
@@ -118,27 +119,27 @@ for (col in names(data)) {
     [1] "No"  "Yes"
 
     Unique values in BusinessTravel :
-    [1] "Travel_Rarely"     "Travel_Frequently" "Non-Travel"       
+    [1] "Travel_Rarely"     "Travel_Frequently" "Non-Travel"
 
     Unique values in Department :
-    [1] "Sales"                  "Research & Development" "Human Resources"       
+    [1] "Sales"                  "Research & Development" "Human Resources"
 
     Unique values in EducationField :
     [1] "Life Sciences"    "Medical"          "Marketing"        "Technical Degree"
-    [5] "Other"            "Human Resources" 
+    [5] "Other"            "Human Resources"
 
     Unique values in Gender :
     [1] "Male"   "Female"
 
     Unique values in JobRole :
-    [1] "Sales Executive"           "Research Director"        
-    [3] "Manufacturing Director"    "Research Scientist"       
+    [1] "Sales Executive"           "Research Director"
+    [3] "Manufacturing Director"    "Research Scientist"
     [5] "Sales Representative"      "Healthcare Representative"
-    [7] "Manager"                   "Human Resources"          
-    [9] "Laboratory Technician"    
+    [7] "Manager"                   "Human Resources"
+    [9] "Laboratory Technician"
 
     Unique values in MaritalStatus :
-    [1] "Divorced" "Single"   "Married" 
+    [1] "Divorced" "Single"   "Married"
 
     Unique values in Over18 :
     [1] "Y"
@@ -148,7 +149,7 @@ for (col in names(data)) {
 
 Since Attrition is our target variable check for imbalance.
 
-``` r
+```r
 str(data)
 ```
 
@@ -190,20 +191,19 @@ str(data)
      $ YearsSinceLastPromotion : int  0 4 2 5 1 1 0 0 0 7 ...
      $ YearsWithCurrManager    : int  3 9 2 7 3 7 3 0 0 7 ...
 
-``` r
+```r
 table(data$Attrition) # Low positive rate, could be difficult to get good specificity
 ```
 
+     No Yes
+    730 140
 
-     No Yes 
-    730 140 
-
-``` r
+```r
 # Recognizing attrition should be factor to ensure positive is Yes for modeling
 data <- data %>% mutate(Attrition = factor(Attrition, levels = c('No','Yes')))
 ```
 
-``` r
+```r
 # Summary of Attrition variable
 attrition_summary <- data %>%
   count(Attrition) %>%
@@ -222,7 +222,7 @@ Strong imbalance will make sensitivity difficult to maximize.
 
 Dropping these variables as they provide no predictive power.
 
-``` r
+```r
 data = select(data, -c(
   'EmployeeCount', # All 1s
   'Over18', # All Yes,
@@ -236,13 +236,13 @@ data = select(data, -c(
 
 Updated recurring throughout EDA and modeling.
 
-``` r
+```r
 optimized_data = data %>%
   mutate(
     TotalSatisfaction = (
-      EnvironmentSatisfaction + 
-      JobSatisfaction + 
-      RelationshipSatisfaction + 
+      EnvironmentSatisfaction +
+      JobSatisfaction +
+      RelationshipSatisfaction +
       WorkLifeBalance) / 4) %>%
   select(-c(
   'DailyRate', 'HourlyRate', 'MonthlyRate', # See 3.5.2
@@ -262,7 +262,7 @@ optimized_data = data %>%
 
 Run prior to section 4.2 transformations for understanding paired data.
 
-``` r
+```r
 numeric_data <- optimized_data %>% select(where(is.numeric))
 cor_matrix <- cor(numeric_data, use = "pairwise.complete.obs")
 print(round(cor_matrix, 2))
@@ -299,7 +299,7 @@ print(round(cor_matrix, 2))
     YearsWithCurrManager                 1.00             -0.01
     TotalSatisfaction                   -0.01              1.00
 
-``` r
+```r
 cor_melt <- melt(cor_matrix)
 cor_melt <- cor_melt[cor_melt$Var1 != cor_melt$Var2, ]  # Remove self-correlations
 
@@ -382,22 +382,22 @@ print(cor_melt)
     23        MonthlyIncome       JobInvolvement  0.0004473792
     39       JobInvolvement        MonthlyIncome  0.0004473792
 
-``` r
+```r
 # Visualize correlations (requires corrplot package)
 library(corrplot)
 corrplot(
   cor_matrix,
-  method = "circle", 
-  type = "upper", 
-  tl.cex = 0.8, 
+  method = "circle",
+  type = "upper",
+  tl.cex = 0.8,
   order = 'hclust',
   hclust.method = 'ward'
 )
 ```
 
-![](attrition_files/figure-commonmark/Correlation%20matrix%20(focus%20on%20%7Ccorr%7C%20%3E%200.5%20for%20potential%20multicollinearity)-1.png)
+![](<attrition_files/figure-commonmark/Correlation%20matrix%20(focus%20on%20%7Ccorr%7C%20%3E%200.5%20for%20potential%20multicollinearity)-1.png>)
 
-``` r
+```r
 # Full correlation matrix as heatmap
 cor_melt <- melt(cor_matrix)
 cor_melt <- cor_melt[cor_melt$Var1 != cor_melt$Var2, ]  # Remove self-correlations
@@ -417,9 +417,9 @@ ggplot(cor_melt, aes(x = Var1, y = Var2, fill = value)) +
   )
 ```
 
-![](attrition_files/figure-commonmark/Correlation%20matrix%20(focus%20on%20%7Ccorr%7C%20%3E%200.5%20for%20potential%20multicollinearity)-2.png)
+![](<attrition_files/figure-commonmark/Correlation%20matrix%20(focus%20on%20%7Ccorr%7C%20%3E%200.5%20for%20potential%20multicollinearity)-2.png>)
 
-``` r
+```r
 # Get top correlated pairs without duplicates
 pairs <- cor_melt %>%
   filter(as.character(Var1) < as.character(Var2)) %>%  # Remove duplicates
@@ -437,7 +437,7 @@ test for categorical value association. Hypothesis: H0 = No association
 between predictor and Attrition; H1 = Association exists. Using cramer’s
 V measurement for feature selection
 
-``` r
+```r
 cat_vars <- names(data)[sapply(data, is.character) | sapply(data, is.factor)]
 cat_vars <- setdiff(cat_vars, "Attrition")  # Exclude target
 
@@ -448,11 +448,11 @@ for (var in cat_vars) {
   cat("\n=== Contingency Table for", var, "vs. Attrition ===\n")
   table_result <- table(data[[var]], data$Attrition)
   print(table_result)
-  
+
   # Chi-square test (use simulate.p.value for small expected counts to avoid warnings)
   chi_test <- chisq.test(table_result, simulate.p.value = TRUE)
   print(chi_test)
-  
+
   # Cramér's V for strength of association (0-1 scale)
   v_value <- cramersV(table_result)
   cat("Cramér's V:", round(v_value, 3), "\n")
@@ -462,9 +462,8 @@ for (var in cat_vars) {
 }
 ```
 
-
     === Contingency Table for BusinessTravel vs. Attrition ===
-                       
+
                          No Yes
       Non-Travel         83  11
       Travel_Frequently 123  35
@@ -476,10 +475,10 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 5.9945, df = NA, p-value = 0.05197
 
-    Cramér's V: 0.083 
+    Cramér's V: 0.083
 
     === Contingency Table for Department vs. Attrition ===
-                            
+
                               No Yes
       Human Resources         29   6
       Research & Development 487  75
@@ -491,10 +490,10 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 9.329, df = NA, p-value = 0.009495
 
-    Cramér's V: 0.104 
+    Cramér's V: 0.104
 
     === Contingency Table for EducationField vs. Attrition ===
-                      
+
                         No Yes
       Human Resources   11   4
       Life Sciences    305  53
@@ -509,10 +508,10 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 6.4114, df = NA, p-value = 0.2729
 
-    Cramér's V: 0.086 
+    Cramér's V: 0.086
 
     === Contingency Table for Gender vs. Attrition ===
-            
+
               No Yes
       Female 301  53
       Male   429  87
@@ -523,10 +522,10 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 0.55469, df = NA, p-value = 0.5157
 
-    Cramér's V: 0.022 
+    Cramér's V: 0.022
 
     === Contingency Table for JobRole vs. Attrition ===
-                               
+
                                  No Yes
       Healthcare Representative  68   8
       Human Resources            21   6
@@ -544,10 +543,10 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 60.543, df = NA, p-value = 0.0004998
 
-    Cramér's V: 0.264 
+    Cramér's V: 0.264
 
     === Contingency Table for MaritalStatus vs. Attrition ===
-              
+
                 No Yes
       Divorced 179  12
       Married  352  58
@@ -559,10 +558,10 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 34.406, df = NA, p-value = 0.0004998
 
-    Cramér's V: 0.199 
+    Cramér's V: 0.199
 
     === Contingency Table for OverTime vs. Attrition ===
-         
+
            No Yes
       No  558  60
       Yes 172  80
@@ -573,9 +572,9 @@ for (var in cat_vars) {
     data:  table_result
     X-squared = 64.383, df = NA, p-value = 0.0004998
 
-    Cramér's V: 0.269 
+    Cramér's V: 0.269
 
-``` r
+```r
 # Bar chart for Cramér's V
 ggplot(table_results, aes(x = reorder(Variable, CramersV), y = CramersV)) +
   geom_bar(stat = "identity", fill = "#EB192C") +
@@ -591,7 +590,7 @@ ggplot(table_results, aes(x = reorder(Variable, CramersV), y = CramersV)) +
   )
 ```
 
-![](attrition_files/figure-commonmark/Cross-tabs%20for%20categorical%20predictors%20vs.%20Attrition%20(chi-square%20test%20for%20association)-1.png)
+![](<attrition_files/figure-commonmark/Cross-tabs%20for%20categorical%20predictors%20vs.%20Attrition%20(chi-square%20test%20for%20association)-1.png>)
 
 Require more formal test: MaritalStatus vs Attrition p-value: .004998
 OverTime vs Attrition p-value: .0004998
@@ -606,7 +605,7 @@ Attrition p-value: .2769 Cramer’s V: .086 Gender vs Attrition p-value:
 
 ## 3.2 Distributions and Visuals
 
-``` r
+```r
 data %>%
   select(where(is.numeric)) %>%
   pivot_longer(everything()) %>%
@@ -625,7 +624,7 @@ data %>%
 
 ![](attrition_files/figure-commonmark/Plots-1.png)
 
-``` r
+```r
 # Alternative: density + boxplot combo
 data %>%
   select(where(is.numeric)) %>%
@@ -640,7 +639,7 @@ data %>%
 
 ![](attrition_files/figure-commonmark/Plots-2.png)
 
-``` r
+```r
 # Categorical Variables
 data %>% select(-Attrition) %>%
   select(where(is.factor) | where(is.character)) %>%
@@ -661,7 +660,7 @@ data %>% select(-Attrition) %>%
 
 ![](attrition_files/figure-commonmark/Plots-3.png)
 
-``` r
+```r
 # Attrition by age
 data %>%
   filter(Attrition == "Yes") %>%
@@ -679,7 +678,7 @@ data %>%
 
 ![](attrition_files/figure-commonmark/Plots-4.png)
 
-``` r
+```r
 # Filter to attrited employees
 attrited_data <- data %>% filter(Attrition == "Yes")
 
@@ -705,7 +704,7 @@ cost_by_level <- attrited_data %>%
 # Bar chart for costs by job level
 ggplot(cost_by_level, aes(x = factor(JobLevel), y = TotalCost / 1e6)) +
   geom_bar(stat = "identity", fill = "#EB192C", color = 'white') +
-  geom_text(aes(label = paste0("$", round(TotalCost / 1e6, 1), "M")), 
+  geom_text(aes(label = paste0("$", round(TotalCost / 1e6, 1), "M")),
             vjust = -0.5, size = 5) +
   labs(title = "Replacement Costs",
        x = "Job Level",
@@ -722,7 +721,7 @@ ggplot(cost_by_level, aes(x = factor(JobLevel), y = TotalCost / 1e6)) +
 
 ## 3.3 Multivariate relationships
 
-``` r
+```r
 # Compute correlations of numeric variables with Attrition (as binary)
 numeric_vars <- data %>% select(where(is.numeric))
 numeric_vars$Attrition_Num <- as.numeric(data$Attrition == "Yes")
@@ -739,24 +738,24 @@ cor_with_attrition <- sort(abs(cor_with_attrition), decreasing = TRUE)
 print(cor_with_attrition)
 ```
 
-              JobInvolvement        TotalWorkingYears                 JobLevel 
-                 0.187793409              0.167206122              0.162136444 
-          YearsInCurrentRole            MonthlyIncome                      Age 
-                 0.156215707              0.154914955              0.149383577 
-            StockOptionLevel     YearsWithCurrManager           YearsAtCompany 
-                 0.148680303              0.146782245              0.128754060 
-             JobSatisfaction          WorkLifeBalance         DistanceFromHome 
-                 0.107520935              0.089789709              0.087136293 
-     EnvironmentSatisfaction    TrainingTimesLastYear       NumCompaniesWorked 
-                 0.077325405              0.062726088              0.061018887 
-                   Education              MonthlyRate RelationshipSatisfaction 
-                 0.049442357              0.043232173              0.039646611 
-                  HourlyRate                DailyRate        PerformanceRating 
-                 0.036554178              0.033793125              0.015333837 
-           PercentSalaryHike  YearsSinceLastPromotion 
-                 0.015328069              0.004573321 
+              JobInvolvement        TotalWorkingYears                 JobLevel
+                 0.187793409              0.167206122              0.162136444
+          YearsInCurrentRole            MonthlyIncome                      Age
+                 0.156215707              0.154914955              0.149383577
+            StockOptionLevel     YearsWithCurrManager           YearsAtCompany
+                 0.148680303              0.146782245              0.128754060
+             JobSatisfaction          WorkLifeBalance         DistanceFromHome
+                 0.107520935              0.089789709              0.087136293
+     EnvironmentSatisfaction    TrainingTimesLastYear       NumCompaniesWorked
+                 0.077325405              0.062726088              0.061018887
+                   Education              MonthlyRate RelationshipSatisfaction
+                 0.049442357              0.043232173              0.039646611
+                  HourlyRate                DailyRate        PerformanceRating
+                 0.036554178              0.033793125              0.015333837
+           PercentSalaryHike  YearsSinceLastPromotion
+                 0.015328069              0.004573321
 
-``` r
+```r
 # Create a data frame for visualization
 cor_df <- data.frame(Variable = names(cor_with_attrition), Correlation = cor_with_attrition)
 
@@ -777,7 +776,7 @@ ggplot(cor_df, aes(x = reorder(Variable, Correlation), y = Correlation)) +
 
 ![](attrition_files/figure-commonmark/attrition%20correlation%20vs%20all%20numerica%20variables-1.png)
 
-``` r
+```r
 ggplot(data, aes(x = Age, y = MonthlyIncome, color = Attrition)) +
   geom_point(alpha = 0.6) +
   facet_wrap(~ Department) +
@@ -787,7 +786,7 @@ ggplot(data, aes(x = Age, y = MonthlyIncome, color = Attrition)) +
 
 ![](attrition_files/figure-commonmark/Age%20vs%20Monthly%20Income%20by%20Department%20and%20Attrition-1.png)
 
-``` r
+```r
 satisfaction_summary <- data %>%
   group_by(JobSatisfaction, EnvironmentSatisfaction, Attrition) %>%
   summarise(Count = n(), .groups = "drop")
@@ -807,7 +806,7 @@ ggplot(satisfaction_summary, aes(x = factor(JobSatisfaction), y = factor(Environ
 
 ### 3.5.1 Is JobLevel or JobRole correlated to Attrition?
 
-``` r
+```r
 data %>%
   group_by(JobRole, JobLevel) %>%
   summarise(
@@ -822,37 +821,37 @@ data %>%
     # A tibble: 26 × 4
        JobRole                   JobLevel     n attrition_rate
        <chr>                        <int> <int>          <dbl>
-     1 Sales Representative             1    50          48   
-     2 Laboratory Technician            3     3          33.3 
-     3 Human Resources                  1    23          26.1 
-     4 Sales Executive                  4     8          25   
-     5 Laboratory Technician            1   115          22.6 
-     6 Research Scientist               1   141          21.3 
-     7 Manager                          3     5          20   
-     8 Sales Executive                  3    51          19.6 
-     9 Healthcare Representative        3    23          17.4 
-    10 Healthcare Representative        4     6          16.7 
-    11 Sales Executive                  2   141          14.9 
-    12 Manager                          5    22          13.6 
+     1 Sales Representative             1    50          48
+     2 Laboratory Technician            3     3          33.3
+     3 Human Resources                  1    23          26.1
+     4 Sales Executive                  4     8          25
+     5 Laboratory Technician            1   115          22.6
+     6 Research Scientist               1   141          21.3
+     7 Manager                          3     5          20
+     8 Sales Executive                  3    51          19.6
+     9 Healthcare Representative        3    23          17.4
+    10 Healthcare Representative        4     6          16.7
+    11 Sales Executive                  2   141          14.9
+    12 Manager                          5    22          13.6
     13 Laboratory Technician            2    35           8.57
     14 Research Director                5    15           6.67
     15 Research Scientist               2    30           6.67
     16 Healthcare Representative        2    47           6.38
     17 Manufacturing Director           3    26           3.85
     18 Manufacturing Director           2    54           1.85
-    19 Human Resources                  2     2           0   
-    20 Human Resources                  3     2           0   
-    21 Manager                          4    24           0   
-    22 Manufacturing Director           4     7           0   
-    23 Research Director                3    21           0   
-    24 Research Director                4    15           0   
-    25 Research Scientist               3     1           0   
-    26 Sales Representative             2     3           0   
+    19 Human Resources                  2     2           0
+    20 Human Resources                  3     2           0
+    21 Manager                          4    24           0
+    22 Manufacturing Director           4     7           0
+    23 Research Director                3    21           0
+    24 Research Director                4    15           0
+    25 Research Scientist               3     1           0
+    26 Sales Representative             2     3           0
 
 Good Compliment predictor, for example 48% attrition rate for Sales
 representative
 
-``` r
+```r
 cor(data$JobLevel, as.numeric(data$Attrition == "Yes"))
 ```
 
@@ -860,7 +859,7 @@ cor(data$JobLevel, as.numeric(data$Attrition == "Yes"))
 
 JobLevel has a -.16 correlation. Higher level means lower attrition.
 
-``` r
+```r
 data %>%
   group_by(Department) %>%
   summarise(
@@ -888,19 +887,19 @@ MonthlyIncome.
 First, we should be able to see a mathmatical correlation between Daily,
 Hourly and Monthly rate.
 
-``` r
+```r
 summary(data[, c("DailyRate", "HourlyRate", "MonthlyRate")])
 ```
 
-       DailyRate        HourlyRate      MonthlyRate   
-     Min.   : 103.0   Min.   : 30.00   Min.   : 2094  
-     1st Qu.: 472.5   1st Qu.: 48.00   1st Qu.: 8092  
-     Median : 817.5   Median : 66.00   Median :14074  
-     Mean   : 815.2   Mean   : 65.61   Mean   :14326  
-     3rd Qu.:1165.8   3rd Qu.: 83.00   3rd Qu.:20456  
-     Max.   :1499.0   Max.   :100.00   Max.   :26997  
+       DailyRate        HourlyRate      MonthlyRate
+     Min.   : 103.0   Min.   : 30.00   Min.   : 2094
+     1st Qu.: 472.5   1st Qu.: 48.00   1st Qu.: 8092
+     Median : 817.5   Median : 66.00   Median :14074
+     Mean   : 815.2   Mean   : 65.61   Mean   :14326
+     3rd Qu.:1165.8   3rd Qu.: 83.00   3rd Qu.:20456
+     Max.   :1499.0   Max.   :100.00   Max.   :26997
 
-``` r
+```r
 ratios <- data.frame(
   Ratio_Type = c("Monthly / (Hourly * 160)", "Monthly / (Daily * 20)", "Daily / (Hourly * 8)"),
   Average_Ratio = c(
@@ -921,7 +920,7 @@ The resulting ratios do not equal 1, likely from synthetic data
 generation. Next, determine relevance as a variable by visualizing a
 relationship between attrition and each variable.
 
-``` r
+```r
 # Facet wrap histograms for pay rates
 data %>%
   filter(Attrition == "Yes") %>%
@@ -945,10 +944,10 @@ MonthlyIncome shows a right skewed distribution and all others are
 non-normal or provide no indicators. Checking for correlation to chose
 best features for models.
 
-``` r
+```r
 # Correlation matrix for pay rates
-cor_matrix <- data %>% 
-  select(contains("Rate"), MonthlyIncome) %>% 
+cor_matrix <- data %>%
+  select(contains("Rate"), MonthlyIncome) %>%
   cor(use = "pairwise.complete.obs")
 
 # Melt for heatmap
@@ -983,12 +982,12 @@ Visualize and represent mathmatically which variables are most impacting
 attrition among our optimized_data set to verify our current retained
 and engineered variables.
 
-``` r
+```r
 # Baseline comparison and check on assumed important variables
 logit_full <- glm(
-  Attrition ~ ., 
-  data = data %>% 
-    mutate(Attrition = factor(Attrition, levels = c("No", "Yes"))), 
+  Attrition ~ .,
+  data = data %>%
+    mutate(Attrition = factor(Attrition, levels = c("No", "Yes"))),
   family = binomial(link = "logit")
 )
 
@@ -1005,22 +1004,22 @@ tidy(logit_full, exponentiate = TRUE, conf.int = TRUE) %>%
     # A tibble: 16 × 7
        term                  estimate conf.low conf.high  p.value odds_ratio p_value
        <chr>                    <dbl>    <dbl>     <dbl>    <dbl>      <dbl>   <dbl>
-     1 OverTimeYes              7.45     4.53     12.6   9.72e-15       7.45  0     
+     1 OverTimeYes              7.45     4.53     12.6   9.72e-15       7.45  0
      2 MaritalStatusSingle      5.90     2.21     17.0   6.05e- 4       5.9   0.0006
      3 BusinessTravelTravel…    4.86     1.81     14.1   2.43e- 3       4.86  0.0024
      4 MaritalStatusMarried     2.55     1.15      6.08  2.68e- 2       2.55  0.0268
-     5 NumCompaniesWorked       1.28     1.15      1.43  7.20e- 6       1.28  0     
-     6 YearsSinceLastPromot…    1.28     1.14      1.45  4.74e- 5       1.28  0     
+     5 NumCompaniesWorked       1.28     1.15      1.43  7.20e- 6       1.28  0
+     6 YearsSinceLastPromot…    1.28     1.14      1.45  4.74e- 5       1.28  0
      7 DistanceFromHome         1.05     1.02      1.08  7.42e- 4       1.05  0.0007
      8 TotalWorkingYears        0.900    0.827     0.976 1.23e- 2       0.9   0.0123
      9 YearsInCurrentRole       0.877    0.776     0.989 3.32e- 2       0.88  0.0332
     10 YearsWithCurrManager     0.854    0.752     0.971 1.49e- 2       0.85  0.0149
-    11 RelationshipSatisfac…    0.772    0.621     0.956 1.80e- 2       0.77  0.018 
+    11 RelationshipSatisfac…    0.772    0.621     0.956 1.80e- 2       0.77  0.018
     12 TrainingTimesLastYear    0.749    0.608     0.917 5.86e- 3       0.75  0.0059
     13 EnvironmentSatisfact…    0.702    0.557     0.881 2.44e- 3       0.7   0.0024
-    14 JobSatisfaction          0.612    0.488     0.761 1.41e- 5       0.61  0     
+    14 JobSatisfaction          0.612    0.488     0.761 1.41e- 5       0.61  0
     15 WorkLifeBalance          0.566    0.404     0.789 8.52e- 4       0.57  0.0009
-    16 JobInvolvement           0.453    0.321     0.632 4.53e- 6       0.45  0     
+    16 JobInvolvement           0.453    0.321     0.632 4.53e- 6       0.45  0
 
 YearsInCurrentRole p-value = .283 but is left out of our model since it
 correlates highly with YearsWithCurrManager. Same with
@@ -1029,36 +1028,35 @@ YearsSinceLastPromotion which did not correlated well with Attrition.
 Potential for derived statistic in YearsInCurrentRole,
 YearsWithCurrManager and TotalWorkingYears.
 
-``` r
-# effect while controlling for everything except categorical variables (JobROle, Departmnet) that create seperation for this model. 
+```r
+# effect while controlling for everything except categorical variables (JobROle, Departmnet) that create seperation for this model.
 logit_model <- glm(
   Attrition ~ OverTime + Age + DistanceFromHome + JobInvolvement + JobLevel + MaritalStatus + NumCompaniesWorked + StockOptionLevel + YearsWithCurrManager + TotalSatisfaction + MonthlyIncome,
   data = optimized_data, family = binomial)
 summary(logit_model)
 ```
 
-
     Call:
-    glm(formula = Attrition ~ OverTime + Age + DistanceFromHome + 
-        JobInvolvement + JobLevel + MaritalStatus + NumCompaniesWorked + 
-        StockOptionLevel + YearsWithCurrManager + TotalSatisfaction + 
+    glm(formula = Attrition ~ OverTime + Age + DistanceFromHome +
+        JobInvolvement + JobLevel + MaritalStatus + NumCompaniesWorked +
+        StockOptionLevel + YearsWithCurrManager + TotalSatisfaction +
         MonthlyIncome, family = binomial, data = optimized_data)
 
     Coefficients:
-                           Estimate Std. Error z value Pr(>|z|)    
+                           Estimate Std. Error z value Pr(>|z|)
     (Intercept)           3.225e+00  9.326e-01   3.458 0.000544 ***
     OverTimeYes           1.702e+00  2.221e-01   7.662 1.83e-14 ***
-    Age                  -3.810e-02  1.481e-02  -2.573 0.010093 *  
-    DistanceFromHome      3.713e-02  1.306e-02   2.843 0.004471 ** 
+    Age                  -3.810e-02  1.481e-02  -2.573 0.010093 *
+    DistanceFromHome      3.713e-02  1.306e-02   2.843 0.004471 **
     JobInvolvement       -6.967e-01  1.495e-01  -4.661 3.15e-06 ***
-    JobLevel             -2.969e-01  3.439e-01  -0.863 0.387987    
-    MaritalStatusMarried  8.632e-01  3.737e-01   2.310 0.020892 *  
+    JobLevel             -2.969e-01  3.439e-01  -0.863 0.387987
+    MaritalStatusMarried  8.632e-01  3.737e-01   2.310 0.020892 *
     MaritalStatusSingle   1.535e+00  4.517e-01   3.398 0.000679 ***
-    NumCompaniesWorked    1.344e-01  4.367e-02   3.077 0.002089 ** 
-    StockOptionLevel     -1.577e-01  1.805e-01  -0.874 0.382277    
-    YearsWithCurrManager -7.337e-02  3.776e-02  -1.943 0.052012 .  
+    NumCompaniesWorked    1.344e-01  4.367e-02   3.077 0.002089 **
+    StockOptionLevel     -1.577e-01  1.805e-01  -0.874 0.382277
+    YearsWithCurrManager -7.337e-02  3.776e-02  -1.943 0.052012 .
     TotalSatisfaction    -1.161e+00  2.168e-01  -5.353 8.66e-08 ***
-    MonthlyIncome        -2.108e-05  8.419e-05  -0.250 0.802293    
+    MonthlyIncome        -2.108e-05  8.419e-05  -0.250 0.802293
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1070,7 +1068,7 @@ summary(logit_model)
 
     Number of Fisher Scoring iterations: 6
 
-``` r
+```r
 # Create multiples for reporting
 tidy(logit_model, exponentiate = TRUE, conf.int = TRUE) %>%
   filter(p.value < 0.05) %>%
@@ -1088,14 +1086,14 @@ tidy(logit_model, exponentiate = TRUE, conf.int = TRUE) %>%
       term                 odds_ratio lower_95 upper_95 p_value
       <chr>                     <dbl>    <dbl>    <dbl>   <dbl>
     1 (Intercept)               25.2      4.11   160.    0.0005
-    2 OverTimeYes                5.48     3.57     8.53  0     
+    2 OverTimeYes                5.48     3.57     8.53  0
     3 MaritalStatusSingle        4.64     1.97    11.7   0.0007
     4 MaritalStatusMarried       2.37     1.17     5.13  0.0209
     5 NumCompaniesWorked         1.14     1.05     1.25  0.0021
     6 DistanceFromHome           1.04     1.01     1.06  0.0045
     7 Age                        0.96     0.93     0.99  0.0101
-    8 JobInvolvement             0.5      0.37     0.67  0     
-    9 TotalSatisfaction          0.31     0.2      0.48  0     
+    8 JobInvolvement             0.5      0.37     0.67  0
+    9 TotalSatisfaction          0.31     0.2      0.48  0
 
 Ordered by z-score:
 
@@ -1133,13 +1131,13 @@ as above variables.
 
 #### 3.5.3.1 Visual tests for significance and derived indicators as features
 
-``` r
+```r
 data %>%
   group_by(Department, OverTime) %>%
   summarise(attrition_rate = mean(Attrition == "Yes"), .groups = "drop") %>%
   ggplot(aes(x = OverTime, y = attrition_rate, fill = Department)) +
   geom_col(position = "dodge") +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             position = position_dodge(width = 0.9), vjust = -0.5) +
   labs(title = "OverTime Effect Is Strongest in Sales",
        y = "Attrition Rate") +
@@ -1152,14 +1150,14 @@ data %>%
 
 ![](attrition_files/figure-commonmark/OverTime%20effect%20by%20Department,%20JobRole-1.png)
 
-``` r
+```r
 # Same plot but by JobRole
 data %>%
   group_by(JobRole, OverTime) %>%
   summarise(attrition_rate = mean(Attrition == "Yes"), .groups = "drop") %>%
   ggplot(aes(x = OverTime, y = attrition_rate, fill = JobRole)) +
   geom_col(position = "dodge") +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             position = position_dodge(width = 0.9), vjust = -0.5) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "OverTime Effect Is Strongest in Sales",
@@ -1175,14 +1173,14 @@ data %>%
 
 OverTime & Sales = High risk for attrition
 
-``` r
+```r
 # Compute tertile breaks for NumCompaniesWorked
 tertile_breaks <- quantile(data$NumCompaniesWorked, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE)
 
 # Create binned variable using tertiles
 data1 <- data %>%
-  mutate(NumCompaniesWorked_bin = cut(NumCompaniesWorked, 
-                                       breaks = tertile_breaks, 
+  mutate(NumCompaniesWorked_bin = cut(NumCompaniesWorked,
+                                       breaks = tertile_breaks,
                                        labels = c("Low", "Medium", "High"),
                                        include.lowest = TRUE))
 
@@ -1192,7 +1190,7 @@ data1 %>%
   summarise(attrition_rate = mean(Attrition == "Yes"), .groups = "drop") %>%
   ggplot(aes(x = MaritalStatus, y = attrition_rate, fill = NumCompaniesWorked_bin)) +
   geom_col(position = "dodge") +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             position = position_dodge(width = 0.9), vjust = -0.5) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "NumCompaniesWorked Effect by MaritalStatus",
@@ -1206,11 +1204,11 @@ data1 %>%
 
 ![](attrition_files/figure-commonmark/MaritalStatus%20effect%20given%20NumCompaniesWorked-1.png)
 
-``` r
+```r
 # Create binned variable with custom breaks
 data1 <- data %>%
-  mutate(NumCompaniesWorked_bin = cut(NumCompaniesWorked, 
-                                       breaks = c(0, 3, 5, 7, 10), 
+  mutate(NumCompaniesWorked_bin = cut(NumCompaniesWorked,
+                                       breaks = c(0, 3, 5, 7, 10),
                                        labels = c("0-2", "3-4", "5-6", "7-9"),
                                        include.lowest = TRUE))
 
@@ -1220,7 +1218,7 @@ data1 %>%
   summarise(attrition_rate = mean(Attrition == "Yes"), .groups = "drop") %>%
   ggplot(aes(x = MaritalStatus, y = attrition_rate, fill = NumCompaniesWorked_bin)) +
   geom_col(position = "dodge") +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             position = position_dodge(width = 0.9), vjust = -0.5) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "NumCompaniesWorked Effect by MaritalStatus",
@@ -1236,11 +1234,11 @@ data1 %>%
 
 No clear indicator that may allow us to combined these variables.
 
-``` r
+```r
 # Bin TotalSatisfaction into categories for plotting (adjust bins as needed)
 data1 <- optimized_data %>%
-  mutate(TotalSatisfaction_bin = cut(TotalSatisfaction, 
-                                      breaks = c(0, 2, 3, 4), 
+  mutate(TotalSatisfaction_bin = cut(TotalSatisfaction,
+                                      breaks = c(0, 2, 3, 4),
                                       labels = c("Low (1-2)", "Medium (2-3)", "High (3-4)")))
 
 # OverTime and TotalSatisfaction effect on attrition
@@ -1251,7 +1249,7 @@ data1 %>%
   geom_col(position = "dodge") +
   scale_fill_manual(values = c("Low (1-2)" = "#EB192C", "Medium (2-3)" = "#FFA500", "High (3-4)" = "#FDD836")) +
   scale_y_continuous(labels = scales::percent) +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             position = position_dodge(width = 0.9), vjust = -0.5) +
   facet_wrap(~ TotalSatisfaction_bin) +
   labs(title = "OverTime Effect by Satisfaction Level",
@@ -1267,7 +1265,7 @@ data1 %>%
 
 ![](attrition_files/figure-commonmark/unnamed-chunk-2-1.png)
 
-``` r
+```r
 # Boxplot showing TotalSatisfaction distribution by Attrition status
 ggplot(optimized_data, aes(x = Attrition, y = TotalSatisfaction, fill = Attrition)) +
   geom_boxplot() +
@@ -1283,11 +1281,11 @@ ggplot(optimized_data, aes(x = Attrition, y = TotalSatisfaction, fill = Attritio
 
 ![](attrition_files/figure-commonmark/unnamed-chunk-2-2.png)
 
-``` r
+```r
 # Bin YearsWithCurrManager into categories for plotting (adjust bins as needed)
 data1 <- data %>%
-  mutate(YearsWithCurrManager_bin = cut(YearsWithCurrManager, 
-                                         breaks = c(0, 2, 5, 10, Inf), 
+  mutate(YearsWithCurrManager_bin = cut(YearsWithCurrManager,
+                                         breaks = c(0, 2, 5, 10, Inf),
                                          labels = c("0-2", "3-5", "6-10", "11+"),
                                          include.lowest = TRUE))
 
@@ -1297,7 +1295,7 @@ data1 %>%
   summarise(attrition_rate = mean(Attrition == "Yes"), .groups = "drop") %>%
   ggplot(aes(x = OverTime, y = attrition_rate, fill = YearsWithCurrManager_bin)) +
   geom_col(position = "dodge") +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             position = position_dodge(width = 0.9), vjust = -0.5) +
   facet_wrap(~ YearsWithCurrManager_bin) +
   scale_y_continuous(labels = scales::percent) +
@@ -1313,7 +1311,7 @@ data1 %>%
 
 ![](attrition_files/figure-commonmark/unnamed-chunk-2-3.png)
 
-``` r
+```r
 # Job Involvement
 data %>%
   group_by(JobInvolvement) %>%
@@ -1334,14 +1332,14 @@ data %>%
 
 ![](attrition_files/figure-commonmark/unnamed-chunk-2-4.png)
 
-``` r
+```r
 data %>%
   group_by(MaritalStatus) %>%
   summarise(attrition_rate = mean(Attrition == "Yes")) %>%
   mutate(MaritalStatus = fct_relevel(MaritalStatus, "Single", "Married", "Divorced")) %>%
   ggplot(aes(x = MaritalStatus, y = attrition_rate, fill = attrition_rate)) +
   geom_col(color = "white", linewidth = 0.8) +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             vjust = -0.5, size = 4.5, fontface = "bold") +
   scale_fill_gradient(low = "#FDD836", high = "#EB192C", name = "Attrition Rate") +
   scale_y_continuous(labels = scales::percent) +
@@ -1355,16 +1353,16 @@ data %>%
 
 ![](attrition_files/figure-commonmark/more%20multivariat%20charts-1.png)
 
-``` r
+```r
 data %>%
-  mutate(NumCompanies_bin = cut(NumCompaniesWorked, 
-                                breaks = c(-1, 0, 2, 4, 10), 
+  mutate(NumCompanies_bin = cut(NumCompaniesWorked,
+                                breaks = c(-1, 0, 2, 4, 10),
                                 labels = c("0", "1-2", "3-4", "5+"))) %>%
   group_by(NumCompanies_bin) %>%
   summarise(attrition_rate = mean(Attrition == "Yes")) %>%
   ggplot(aes(x = NumCompanies_bin, y = attrition_rate, fill = attrition_rate)) +
   geom_col(color = "white", linewidth = 0.8) +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             vjust = -0.5, size = 4.5, fontface = "bold") +
   scale_fill_gradient(low = "#FDD836", high = "#EB192C") +
   scale_y_continuous(labels = scales::percent) +
@@ -1379,16 +1377,16 @@ data %>%
 
 ![](attrition_files/figure-commonmark/more%20multivariat%20charts-2.png)
 
-``` r
+```r
 data %>%
-  mutate(Distance_bin = cut(DistanceFromHome, 
-                            breaks = c(0, 5, 10, 15, 30), 
+  mutate(Distance_bin = cut(DistanceFromHome,
+                            breaks = c(0, 5, 10, 15, 30),
                             labels = c("0-5", "6-10", "11-15", "16+ miles"))) %>%
   group_by(Distance_bin) %>%
   summarise(attrition_rate = mean(Attrition == "Yes")) %>%
   ggplot(aes(x = Distance_bin, y = attrition_rate, fill = attrition_rate)) +
   geom_col(color = "white", linewidth = 0.8) +
-  geom_text(aes(label = paste0(round(attrition_rate*100), "%")), 
+  geom_text(aes(label = paste0(round(attrition_rate*100), "%")),
             vjust = -0.5, size = 4.5, fontface = "bold") +
   scale_fill_gradient(low = "#FDD836", high = "#EB192C") +
   scale_y_continuous(labels = scales::percent) +
@@ -1435,7 +1433,7 @@ this method as powered_model.
 
 ## 4.1 Base KNN transformation
 
-``` r
+```r
 set.seed(50)  # for reproducibility
 knn_train_index <- createDataPartition(data$Attrition, p = 0.7, list = FALSE)
 knn_train <- data[knn_train_index, ]
@@ -1470,26 +1468,26 @@ knn_test_labels <- as.factor(knn_test$Attrition)
 After tranformation, ensure no empty cells or NA values were incorrectly
 encoded. Values like this will disrupt a knn() call.
 
-``` r
+```r
 # Check for null or missing
 sum(is.na(knn_train_prepared))
 ```
 
     [1] 0
 
-``` r
+```r
 sum(is.null(knn_train_prepared))
 ```
 
     [1] 0
 
-``` r
+```r
 sum(is.na(knn_test_prepared))
 ```
 
     [1] 0
 
-``` r
+```r
 sum(is.na(knn_test_prepared))
 ```
 
@@ -1500,7 +1498,7 @@ sum(is.na(knn_test_prepared))
 These transformations are for NB models using catagorical variables
 instead of encoding or scaling.
 
-``` r
+```r
 data_nb <- data %>%
   mutate(
     Education = factor(
@@ -1555,7 +1553,7 @@ data_nb <- data %>%
 
 ## 4.3 Optimized NB transformation
 
-``` r
+```r
 data_nb <- data %>%
   mutate(
     EnvironmentSatisfaction = factor(
@@ -1581,10 +1579,10 @@ Looking at the entire original dataset as a starting point.
 
 ### 5.1.1 KNN
 
-``` r
-knn_base <- knn(train = knn_train_prepared, 
-                test = knn_test_prepared, 
-                cl = knn_train_labels, 
+```r
+knn_base <- knn(train = knn_train_prepared,
+                test = knn_test_prepared,
+                cl = knn_train_labels,
                 k = 5)
 knn_cm <- confusionMatrix(knn_base, knn_test_labels, positive = 'Yes')
 print(knn_cm)
@@ -1596,27 +1594,27 @@ print(knn_cm)
     Prediction  No Yes
            No  219  32
            Yes   0  10
-                                              
-                   Accuracy : 0.8774          
+
+                   Accuracy : 0.8774
                      95% CI : (0.8313, 0.9146)
-        No Information Rate : 0.8391          
-        P-Value [Acc > NIR] : 0.05108         
-                                              
-                      Kappa : 0.344           
-                                              
-     Mcnemar's Test P-Value : 4.251e-08       
-                                              
-                Sensitivity : 0.23810         
-                Specificity : 1.00000         
-             Pos Pred Value : 1.00000         
-             Neg Pred Value : 0.87251         
-                 Prevalence : 0.16092         
-             Detection Rate : 0.03831         
-       Detection Prevalence : 0.03831         
-          Balanced Accuracy : 0.61905         
-                                              
-           'Positive' Class : Yes             
-                                              
+        No Information Rate : 0.8391
+        P-Value [Acc > NIR] : 0.05108
+
+                      Kappa : 0.344
+
+     Mcnemar's Test P-Value : 4.251e-08
+
+                Sensitivity : 0.23810
+                Specificity : 1.00000
+             Pos Pred Value : 1.00000
+             Neg Pred Value : 0.87251
+                 Prevalence : 0.16092
+             Detection Rate : 0.03831
+       Detection Prevalence : 0.03831
+          Balanced Accuracy : 0.61905
+
+           'Positive' Class : Yes
+
 
 Noticing specificity is low. Means we’re not predicting who is attrited
 Conslusion: Our base case model is very specific. Is there a significant
@@ -1624,7 +1622,7 @@ feature that makes predicting non-attrition easier?
 
 ### 5.1.2 NB
 
-``` r
+```r
 set.seed(50)  # for reproducibility
 train_idx <- createDataPartition(data_nb$Attrition, p = 0.7, list = FALSE)
 nb_train <- data_nb[train_idx, ]
@@ -1643,27 +1641,27 @@ print(nb_test_cm)
     Prediction  No Yes
            No  188  13
            Yes  31  29
-                                              
-                   Accuracy : 0.8314          
+
+                   Accuracy : 0.8314
                      95% CI : (0.7804, 0.8748)
-        No Information Rate : 0.8391          
-        P-Value [Acc > NIR] : 0.66882         
-                                              
-                      Kappa : 0.4679          
-                                              
-     Mcnemar's Test P-Value : 0.01038         
-                                              
-                Sensitivity : 0.6905          
-                Specificity : 0.8584          
-             Pos Pred Value : 0.4833          
-             Neg Pred Value : 0.9353          
-                 Prevalence : 0.1609          
-             Detection Rate : 0.1111          
-       Detection Prevalence : 0.2299          
-          Balanced Accuracy : 0.7745          
-                                              
-           'Positive' Class : Yes             
-                                              
+        No Information Rate : 0.8391
+        P-Value [Acc > NIR] : 0.66882
+
+                      Kappa : 0.4679
+
+     Mcnemar's Test P-Value : 0.01038
+
+                Sensitivity : 0.6905
+                Specificity : 0.8584
+             Pos Pred Value : 0.4833
+             Neg Pred Value : 0.9353
+                 Prevalence : 0.1609
+             Detection Rate : 0.1111
+       Detection Prevalence : 0.2299
+          Balanced Accuracy : 0.7745
+
+           'Positive' Class : Yes
+
 
 ## 5.2 Tuning
 
@@ -1678,7 +1676,7 @@ To ensure caret does not conflict with our transformations already,
 we’ll create a new stratified split. Since we are using the same
 instance (set.seed()), the data is the same.
 
-``` r
+```r
 set.seed(50)
 
 model_data <- data %>%
@@ -1693,7 +1691,7 @@ is.factor(train_data$Attrition)
 
     [1] TRUE
 
-``` r
+```r
 is.factor(test_data$Attrition)
 ```
 
@@ -1703,7 +1701,7 @@ is.factor(test_data$Attrition)
 
 Adjusting K and threshold…
 
-``` r
+```r
 # Training to a control namespace that will be used for evaluation
 ctrl <- trainControl(
   method = "repeatedcv", # "repeatedcv" k-fold cross-validation or "LGOCV" for 70/30 style
@@ -1711,7 +1709,7 @@ ctrl <- trainControl(
   repeats = 5, # 5 = 50 total resamples only with method = "repeatedcv"
   classProbs = TRUE, # TRUE = display probability predictions
   savePredictions = "final", # save the predictions so threshold may be tuned
-  allowParallel = TRUE, # efficiency. use all computer CPU cores to process 
+  allowParallel = TRUE, # efficiency. use all computer CPU cores to process
 )
 
 # The model, Switching to train() over knn() for tuning
@@ -1719,14 +1717,14 @@ set.seed(50)
 knn_fit <- train(
   Attrition ~ ., # Target variable ~ all others as predictors
   data = train_data, # from 4.1 leave out a unbiased test set
-  method = "knn", 
+  method = "knn",
   tuneGrid = data.frame(k = seq(5,85, by = 1)), # Test every k from 1 to 50 Determined >50 deminising returns during 5.1 baseline
   trControl = ctrl, # bring in control (test) objective
   preProcess = c("center", "scale"), # handles all scaling, numerical and character. Can have Center, Scale, Range, knnImpute
   metric = "ROC" # ← THIS IS THE KEY LINE Spec Sens Accuracy, Balanced Accuracy. Primary goal is accuracy, secondary sensitivity
 )
 # What happens inside train()?
-# 1. caret automatically converts ALL factor columns (BusinessTravel, 
+# 1. caret automatically converts ALL factor columns (BusinessTravel,
 #    Department, EducationField, Gender, JobRole, MaritalStatus, OverTime)
 #    into dummy variables (one-hot encoding) using model.matrix internally.
 # 2. It then centers and scales every numeric column (including the new dummies).
@@ -1739,14 +1737,14 @@ print("Best k from training (max Accuracy):")
 
     [1] "Best k from training (max Accuracy):"
 
-``` r
+```r
 print(knn_fit$bestTune) # best k for max Spec
 ```
 
       k
     1 5
 
-``` r
+```r
 # print(knn_fit$results) # see Spec, Sens, Accuracy for every k
 ```
 
@@ -1764,21 +1762,21 @@ assessed best K can offer, we want to change our tuning.
 This (chunk above and below) requires additional computational power.
 Luckily today it would only take a few minutes on a dedicated device.
 
-``` r
+```r
 cv_pred <- knn_fit$pred
-thresh_grid <- seq(0.20, 0.9, by = 0.02) # Can change this up to play around. 
+thresh_grid <- seq(0.20, 0.9, by = 0.02) # Can change this up to play around.
 
 results <- data.frame()
 
 for (k_val in unique(cv_pred$k)) {
   for (th in thresh_grid) {
     sub <- cv_pred[cv_pred$k == k_val, ]
-    
-    pred_class <- factor(ifelse(sub$Yes >= th, "Yes", "No"), 
+
+    pred_class <- factor(ifelse(sub$Yes >= th, "Yes", "No"),
                          levels = c("No", "Yes"))
-    
+
     cm <- confusionMatrix(pred_class, sub$obs, positive = "Yes")
-    
+
     results <- rbind(results, data.frame(
       k         = k_val,
       threshold = th,
@@ -1791,21 +1789,21 @@ for (k_val in unique(cv_pred$k)) {
 
 Now pick the best.
 
-``` r
+```r
 best <- results %>%
   filter(Specificity >= 0.60) %>%
   arrange(desc(Sensitivity)) %>%
   slice(1)
 
-cat("Best joint combination (from repeatedcv only): k =", best$k, 
+cat("Best joint combination (from repeatedcv only): k =", best$k,
     "| threshold =", round(best$threshold, 3), "\n")
 ```
 
-    Best joint combination (from repeatedcv only): k = 5 | threshold = 0.2 
+    Best joint combination (from repeatedcv only): k = 5 | threshold = 0.2
 
 Finally evaluate against the unbias test set
 
-``` r
+```r
 test_probs <- predict(knn_fit, newdata = test_data, type = "prob")[, "Yes"]
 final_pred <- factor(ifelse(test_probs >= best$threshold, "Yes", "No"), levels = c("No", "Yes"))
 knn_cm <- confusionMatrix(final_pred, test_data$Attrition, positive = "Yes")
@@ -1820,39 +1818,39 @@ knn_cm
     Prediction  No Yes
            No  126  11
            Yes  93  31
-                                              
-                   Accuracy : 0.6015          
-                     95% CI : (0.5393, 0.6614)
-        No Information Rate : 0.8391          
-        P-Value [Acc > NIR] : 1               
-                                              
-                      Kappa : 0.1752          
-                                              
-     Mcnemar's Test P-Value : 1.978e-15       
-                                              
-                Sensitivity : 0.7381          
-                Specificity : 0.5753          
-             Pos Pred Value : 0.2500          
-             Neg Pred Value : 0.9197          
-                 Prevalence : 0.1609          
-             Detection Rate : 0.1188          
-       Detection Prevalence : 0.4751          
-          Balanced Accuracy : 0.6567          
-                                              
-           'Positive' Class : Yes             
-                                              
 
-``` r
+                   Accuracy : 0.6015
+                     95% CI : (0.5393, 0.6614)
+        No Information Rate : 0.8391
+        P-Value [Acc > NIR] : 1
+
+                      Kappa : 0.1752
+
+     Mcnemar's Test P-Value : 1.978e-15
+
+                Sensitivity : 0.7381
+                Specificity : 0.5753
+             Pos Pred Value : 0.2500
+             Neg Pred Value : 0.9197
+                 Prevalence : 0.1609
+             Detection Rate : 0.1188
+       Detection Prevalence : 0.4751
+          Balanced Accuracy : 0.6567
+
+           'Positive' Class : Yes
+
+
+```r
 cat("knn_fit is using k =", knn_fit$bestTune$k, "\n")
 ```
 
-    knn_fit is using k = 5 
+    knn_fit is using k = 5
 
-``` r
+```r
 cat("We are applying threshold =", best$threshold, "\n")
 ```
 
-    We are applying threshold = 0.2 
+    We are applying threshold = 0.2
 
 Conclusion: when threshold is below .2, we see diminishing returns to
 accuracy while sensitivity stay at 100%
@@ -1861,15 +1859,15 @@ accuracy while sensitivity stay at 100%
 
 Adjusting Laplace and threshold…
 
-``` r
-# no change in ctrl, just restating. 
+```r
+# no change in ctrl, just restating.
 ctrl <- trainControl(
   method = "cv", # "repeatedcv" k-fold cross-validation or "LGOCV" for 70/30 style
   number = 3, # 10 = 10 folds or iterations
   #repeats = 5, # 5 = 50 total resamples only with method = "repeatedcv"
   classProbs = TRUE, # TRUE = display probability predictions
   savePredictions = "final", # save the predictions so threshold may be tuned
-  allowParallel = TRUE, # efficiency. use all computer CPU cores to process 
+  allowParallel = TRUE, # efficiency. use all computer CPU cores to process
 )
 
 nb_fit <- train(
@@ -1892,7 +1890,7 @@ with a naive_bayes sub-package.
 To resolve, we’ll need to force e1071 package and manually loop through
 the 3 laplace options and view results:
 
-``` r
+```r
 # Train the model exactly like original base NB (section 5.4)
 nb_model <- naiveBayes(
   Attrition ~ .,
@@ -1905,17 +1903,17 @@ test_probs_nb <- predict(nb_model, test_data, type = "raw")[, "Yes"]
 
 Tune threshold for laplace chosen…
 
-``` r
+```r
 # Simple threshold sweep to guarantee ≥60% on both metrics
 thresh_grid <- seq(0.15, 0.40, by = 0.01)
 results_nb <- data.frame()
 
 for (th in thresh_grid) {
-  pred_class <- factor(ifelse(test_probs_nb >= th, "Yes", "No"), 
+  pred_class <- factor(ifelse(test_probs_nb >= th, "Yes", "No"),
                        levels = c("No", "Yes"))
-  
+
   cm <- confusionMatrix(pred_class, test_data$Attrition, positive = "Yes")
-  
+
   results_nb <- rbind(results_nb, data.frame(
     threshold   = th,
     Sensitivity = round(cm$byClass["Sensitivity"], 4),
@@ -1926,7 +1924,7 @@ for (th in thresh_grid) {
 
 Pick best result
 
-``` r
+```r
 best_nb <- results_nb %>%
   filter(Specificity >= 0.60) %>%
   arrange(desc(Sensitivity)) %>%
@@ -1935,14 +1933,14 @@ best_nb <- results_nb %>%
 cat("Best threshold =", best_nb$threshold, "\n")
 ```
 
-    Best threshold = 0.16 
+    Best threshold = 0.16
 
 laplace = 0: threshold = .15 laplace = 1: threshold = .16 laplace = 2:
 threshold = .
 
 test against unbiased eval set
 
-``` r
+```r
 final_pred_nb <- factor(
   ifelse(test_probs_nb >= best_nb$threshold, "Yes", "No"),
   levels = c("No", "Yes")
@@ -1959,27 +1957,27 @@ print(nb_cm)
     Prediction  No Yes
            No  133   8
            Yes  86  34
-                                              
-                   Accuracy : 0.6398          
+
+                   Accuracy : 0.6398
                      95% CI : (0.5784, 0.6981)
-        No Information Rate : 0.8391          
-        P-Value [Acc > NIR] : 1               
-                                              
-                      Kappa : 0.2381          
-                                              
-     Mcnemar's Test P-Value : 1.99e-15        
-                                              
-                Sensitivity : 0.8095          
-                Specificity : 0.6073          
-             Pos Pred Value : 0.2833          
-             Neg Pred Value : 0.9433          
-                 Prevalence : 0.1609          
-             Detection Rate : 0.1303          
-       Detection Prevalence : 0.4598          
-          Balanced Accuracy : 0.7084          
-                                              
-           'Positive' Class : Yes             
-                                              
+        No Information Rate : 0.8391
+        P-Value [Acc > NIR] : 1
+
+                      Kappa : 0.2381
+
+     Mcnemar's Test P-Value : 1.99e-15
+
+                Sensitivity : 0.8095
+                Specificity : 0.6073
+             Pos Pred Value : 0.2833
+             Neg Pred Value : 0.9433
+                 Prevalence : 0.1609
+             Detection Rate : 0.1303
+       Detection Prevalence : 0.4598
+          Balanced Accuracy : 0.7084
+
+           'Positive' Class : Yes
+
 
 laplace = 0: threshold = .15, Accuracy 67.05%, Sensitity 78.57%,
 Specificity 64.84% laplace = 1: threshold = .16, Accuracy 63.98%,
@@ -1996,7 +1994,7 @@ result will give us our final prediction model.
 
 Start with the same concept as 5.2, just change the dataset.
 
-``` r
+```r
 set.seed(50)
 
 model_data <- optimized_data %>% # here
@@ -2011,7 +2009,7 @@ is.factor(train_data$Attrition)
 
     [1] TRUE
 
-``` r
+```r
 is.factor(test_data$Attrition)
 ```
 
@@ -2021,20 +2019,20 @@ is.factor(test_data$Attrition)
 
 Same as 5.2.1
 
-``` r
+```r
 ctrl <- trainControl(
   method = "repeatedcv", # "repeatedcv" k-fold cross-validation or "LGOCV" for 70/30 style
   number = 10, # 10 = 10 folds or iterations
   repeats = 5, # 5 = 50 total resamples only with method = "repeatedcv"
   classProbs = TRUE, # TRUE = display probability predictions
   savePredictions = "final", # save the predictions so threshold may be tuned
-  allowParallel = TRUE, # efficiency. use all computer CPU cores to process 
+  allowParallel = TRUE, # efficiency. use all computer CPU cores to process
 )
 
 knn_fit <- train(
   Attrition ~ ., # Target variable ~ all others as predictors
   data = train_data, # from 4.1 leave out a unbiased test set
-  method = "knn", 
+  method = "knn",
   tuneGrid = data.frame(k = seq(5,85, by = 1)), # Test every k from 1 to 50 Determined >50 deminising returns during 5.1 baseline
   trControl = ctrl, # bring in control (test) objective
   preProcess = c("center", "scale"), # handles all scaling, numerical and character. Can have Center, Scale, Range, knnImpute
@@ -2047,17 +2045,17 @@ print("Best k from training (max Accuracy):")
 
     [1] "Best k from training (max Accuracy):"
 
-``` r
+```r
 print(knn_fit$bestTune)
 ```
 
        k
     8 12
 
-``` r
+```r
 # Joint K & threshold tuning
 cv_pred <- knn_fit$pred
-thresh_grid <- seq(0.15, 0.4, by = 0.02) # Can change this up to play around. 
+thresh_grid <- seq(0.15, 0.4, by = 0.02) # Can change this up to play around.
 
 results <- data.frame()
 for (k_val in unique(cv_pred$k)) {
@@ -2078,15 +2076,15 @@ best <- results %>%
   arrange(desc(Sensitivity)) %>%
   slice(1)
 
-cat("Best joint combination (from repeatedcv only): k =", best$k, 
+cat("Best joint combination (from repeatedcv only): k =", best$k,
     "| threshold =", round(best$threshold, 3), "\n")
 ```
 
-    Best joint combination (from repeatedcv only): k = 12 | threshold = 0.15 
+    Best joint combination (from repeatedcv only): k = 12 | threshold = 0.15
 
 Final optimized results:
 
-``` r
+```r
 test_probs <- predict(knn_fit, newdata = test_data, type = "prob")[, "Yes"]
 final_pred <- factor(ifelse(test_probs >= best$threshold, "Yes", "No"), levels = c("No", "Yes"))
 knn_cm <- confusionMatrix(final_pred, test_data$Attrition, positive = "Yes")
@@ -2101,39 +2099,39 @@ knn_cm
     Prediction  No Yes
            No  135  10
            Yes  84  32
-                                              
-                   Accuracy : 0.6398          
-                     95% CI : (0.5784, 0.6981)
-        No Information Rate : 0.8391          
-        P-Value [Acc > NIR] : 1               
-                                              
-                      Kappa : 0.221           
-                                              
-     Mcnemar's Test P-Value : 5.098e-14       
-                                              
-                Sensitivity : 0.7619          
-                Specificity : 0.6164          
-             Pos Pred Value : 0.2759          
-             Neg Pred Value : 0.9310          
-                 Prevalence : 0.1609          
-             Detection Rate : 0.1226          
-       Detection Prevalence : 0.4444          
-          Balanced Accuracy : 0.6892          
-                                              
-           'Positive' Class : Yes             
-                                              
 
-``` r
+                   Accuracy : 0.6398
+                     95% CI : (0.5784, 0.6981)
+        No Information Rate : 0.8391
+        P-Value [Acc > NIR] : 1
+
+                      Kappa : 0.221
+
+     Mcnemar's Test P-Value : 5.098e-14
+
+                Sensitivity : 0.7619
+                Specificity : 0.6164
+             Pos Pred Value : 0.2759
+             Neg Pred Value : 0.9310
+                 Prevalence : 0.1609
+             Detection Rate : 0.1226
+       Detection Prevalence : 0.4444
+          Balanced Accuracy : 0.6892
+
+           'Positive' Class : Yes
+
+
+```r
 cat("knn_fit is using k =", knn_fit$bestTune$k, "\n")
 ```
 
-    knn_fit is using k = 12 
+    knn_fit is using k = 12
 
-``` r
+```r
 cat("We are applying threshold =", best$threshold, "\n")
 ```
 
-    We are applying threshold = 0.15 
+    We are applying threshold = 0.15
 
 The floor threshold can be adjusted to improve sensitivity at the cost
 of accuracy.
@@ -2142,7 +2140,7 @@ of accuracy.
 
 no change from 5.2.2
 
-``` r
+```r
 nb_model <- naiveBayes(
   Attrition ~ .,
   data = train_data,
@@ -2172,11 +2170,11 @@ best_nb <- results_nb %>%
 cat("Best threshold =", best_nb$threshold, "\n")
 ```
 
-    Best threshold = 0.15 
+    Best threshold = 0.15
 
 Final optimized results:
 
-``` r
+```r
 final_pred_nb <- factor(
   ifelse(test_probs_nb >= best_nb$threshold, "Yes", "No"),
   levels = c("No", "Yes")
@@ -2193,40 +2191,40 @@ print(nb_cm)
     Prediction  No Yes
            No  135   7
            Yes  84  35
-                                              
-                   Accuracy : 0.6513          
+
+                   Accuracy : 0.6513
                      95% CI : (0.5901, 0.7091)
-        No Information Rate : 0.8391          
-        P-Value [Acc > NIR] : 1               
-                                              
-                      Kappa : 0.2584          
-                                              
-     Mcnemar's Test P-Value : 1.626e-15       
-                                              
-                Sensitivity : 0.8333          
-                Specificity : 0.6164          
-             Pos Pred Value : 0.2941          
-             Neg Pred Value : 0.9507          
-                 Prevalence : 0.1609          
-             Detection Rate : 0.1341          
-       Detection Prevalence : 0.4559          
-          Balanced Accuracy : 0.7249          
-                                              
-           'Positive' Class : Yes             
-                                              
+        No Information Rate : 0.8391
+        P-Value [Acc > NIR] : 1
+
+                      Kappa : 0.2584
+
+     Mcnemar's Test P-Value : 1.626e-15
+
+                Sensitivity : 0.8333
+                Specificity : 0.6164
+             Pos Pred Value : 0.2941
+             Neg Pred Value : 0.9507
+                 Prevalence : 0.1609
+             Detection Rate : 0.1341
+       Detection Prevalence : 0.4559
+          Balanced Accuracy : 0.7249
+
+           'Positive' Class : Yes
+
 
 # 6. Model Evaluation against Competition dataset
 
-``` r
+```r
 comp_data <- read.csv('CaseStudy1CompSet No Attrition.csv')
 dim(comp_data)
 ```
 
     [1] 300  35
 
-``` r
+```r
 comp_final <- comp_data %>%
-  mutate(TotalSatisfaction = (EnvironmentSatisfaction + JobSatisfaction + 
+  mutate(TotalSatisfaction = (EnvironmentSatisfaction + JobSatisfaction +
                               RelationshipSatisfaction + WorkLifeBalance) / 4) %>%
   select(-c(DailyRate, HourlyRate, MonthlyRate, BusinessTravel, Education,
             EducationField, Gender, YearsAtCompany, YearsInCurrentRole,
@@ -2242,7 +2240,7 @@ comp_final <- comp_data %>%
 
 KNN predicted 3 less attritions than NB in our best model.
 
-``` r
+```r
 # Predict with BEST model + threshold
 comp_probs <- predict(knn_fit, comp_final, type = "prob")[, "Yes"]
 comp_pred  <- ifelse(comp_probs >= best$threshold, "Yes", "No")
@@ -2255,7 +2253,7 @@ predictions <- data.frame(ID = comp_final$ID, Attrition = comp_pred)
 
 Winning model.
 
-``` r
+```r
 comp_probs <- predict(nb_model, comp_final, type = "raw")[, "Yes"]
 comp_pred  <- ifelse(comp_probs >= best_nb$threshold, "Yes", "No")
 
@@ -2270,7 +2268,7 @@ write.csv(predictions, "Aaron_Powell_Case1_Competition_Predictions.csv", row.nam
 First, let’s look at who is leaving the company, their demographics and
 where they are working.
 
-``` r
+```r
 # Summarize attrition rates and mean age of attrited by department and job level
 attrition_summary <- data %>%
   group_by(Department, JobLevel) %>%
@@ -2293,7 +2291,7 @@ attrition_merged <- left_join(attrition_summary, attrition_count, by = c("Depart
 
 # Reorder Department factor with Sales first
 attrition_merged$Department <- factor(
-  attrition_merged$Department, 
+  attrition_merged$Department,
   levels = c("Sales", "Research & Development", "Human Resources")
 )
 
@@ -2327,9 +2325,9 @@ ggplot(attrition_filtered, aes(x = Department, y = factor(JobLevel), fill = Attr
 
 ![](attrition_files/figure-commonmark/attrition%20JobLevel%20heatmap-1.png)
 
-``` r
-ggplot(data, aes(x = JobRole, fill = Attrition)) + 
-  geom_bar(position = "fill") + 
+```r
+ggplot(data, aes(x = JobRole, fill = Attrition)) +
+  geom_bar(position = "fill") +
   coord_flip() +
   labs(title = "Attrition Rate by Job Role") +
   theme_bw() # Needs FritoLays brand and y axis organized.
@@ -2339,7 +2337,7 @@ ggplot(data, aes(x = JobRole, fill = Attrition)) +
 
 ## 7.2 Why are they leaving?
 
-``` r
+```r
 # Summarize attrition rates and mean age of attrited by binned YearsWithCurrManager and StockOptionLevel
 attrition_summary <- data %>%
   mutate(
@@ -2405,15 +2403,15 @@ ggplot(attrition_filtered, aes(x = YearsManager_bin, y = StockOptionLevel, fill 
 
 Cost savings analysis and projected financial impact
 
-``` r
+```r
 # Retrain final model on FULL data for realistic deployment estimate
 final_nb_model <- naiveBayes(Attrition ~ ., data = optimized_data, laplace = 1)
 
-# Predict on full company 
+# Predict on full company
 full_results <- optimized_data %>%
   mutate(
     PredProb   = predict(final_nb_model, newdata = optimized_data, type = "raw")[, "Yes"],
-    Predicted  = factor(ifelse(PredProb >= best_nb$threshold, "Yes", "No"), 
+    Predicted  = factor(ifelse(PredProb >= best_nb$threshold, "Yes", "No"),
                         levels = c("No", "Yes")),
     Actual     = Attrition
   ) %>%
@@ -2459,22 +2457,22 @@ ggplot(full_results, aes(x = Predicted, fill = Actual)) +
 
 ![](attrition_files/figure-commonmark/unnamed-chunk-19-1.png)
 
-``` r
+```r
 library(kableExtra)
 
-kable(savings_table, caption = "Projected Cost Savings Using Tuned Naive Bayes Model", 
+kable(savings_table, caption = "Projected Cost Savings Using Tuned Naive Bayes Model",
       digits = 0, format.args = list(big.mark = ",")) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-| Scenario | Employees.Retained | Baseline.Replacement.Cost | Cost.with.Model | Projected.Savings | Savings..Millions. |
-|:---|---:|---:|---:|---:|---:|
-| Full Company Projection (1,470 employees) | 115 | 8,601,629 | 6,238,247 | 2,363,382 | 2 |
-| \*\*NET SAVINGS\*\* | 115 | 8,601,629 | 6,238,247 | 2,363,382 | 2 |
+| Scenario                                  | Employees.Retained | Baseline.Replacement.Cost | Cost.with.Model | Projected.Savings | Savings..Millions. |
+| :---------------------------------------- | -----------------: | ------------------------: | --------------: | ----------------: | -----------------: |
+| Full Company Projection (1,470 employees) |                115 |                 8,601,629 |       6,238,247 |         2,363,382 |                  2 |
+| \*\*NET SAVINGS\*\*                       |                115 |                 8,601,629 |       6,238,247 |         2,363,382 |                  2 |
 
 Projected Cost Savings Using Tuned Naive Bayes Model
 
-``` r
+```r
 # === 7.3.1 Projected Savings as Frito-Lay Grows (Add this chunk right after your savings_table) ===
 
 # Linear scaling assumption (constant attrition rate + model accuracy)
