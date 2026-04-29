@@ -1,0 +1,112 @@
+---
+title: "Predicting Ames Housing Prices"
+author: "Aaron Powell"
+date: "2026-04-10"
+description: "Linear regression analysis of housing prices in Ames, Iowa."
+categories: ["R", "Modeling", "Regression", "EDA", "Kaggle"]
+image: ../images/kaggle_5407_media_housesbanner.png
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    toc-depth: 3
+    code-tools: true
+    fig-cap-location: margin
+
+execute:
+  warning: false
+  message: false
+  freeze: auto
+---
+
+## Project Links
+
+::: {.grid}
+
+::: {.g-col-6}
+[![](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/PowellOnPoint/Housing-Prices-Regression)
+:::
+
+::: {.g-col-6}
+[![](https://img.shields.io/badge/Live-Shiny%20Dashboard-green?logo=shiny)](https://powellonpoint.shinyapps.io/Ames_Iowa_Housing_Sales_EDA_2006-2010/)
+:::
+
+:::
+
+[Full Project Report (PDF)](MSDS 6371 Final Project report.pdf)
+
+**Data Source**: Kaggle House Prices: Advanced Regression Techniques dataset (Ames, Iowa housing sales 2006-2010).
+
+**Technologies**: R, `tidyverse`, `ggplot2`, `shiny`, linear regression, model diagnostics.
+
+## Project Overview
+
+This project, completed as the final assignment for MSDS 6371 (Statistical Foundations for Data Science), analyzes housing prices in Ames, Iowa using multiple linear regression. The analysis addresses two distinct objectives:
+
+1. **Client-Focused Model for Century 21 Ames**: Develop a clear, interpretable model of SalePrice versus GrLivArea (scaled per 100 sq ft) for the NAmes, Edwards, and BrkSide neighborhoods, including interaction effects to account for neighborhood-specific pricing dynamics.
+
+2. **Predictive Modeling Competition**: Build and compare the strongest possible MLR models across all Ames neighborhoods for Kaggle submission, evaluating performance on unseen test data.
+
+The project involved comprehensive data cleaning, exploratory data analysis, model building with diagnostics, influential point analysis, and cross-validation. All techniques were limited to those covered in the course.
+
+## Interactive R Shiny Dashboard
+
+The dashboard allows users to:
+
+- Explore the relationship between SalePrice and GrLivArea by neighborhood
+- Filter and visualize housing data interactively
+
+[**Try it live!**](https://powellonpoint.shinyapps.io/Ames_Iowa_Housing_Sales_EDA_2006-2010/)
+
+## Key Insights
+
+### 1. Neighborhood Interactions Drive Pricing Differences
+
+The relationship between living area (GrLivArea) and sale price is not uniform across neighborhoods. For Century 21 Ames' target neighborhoods (NAmes, Edwards, BrkSide), interaction terms between GrLivArea and neighborhood were essential. The model revealed that a 100 sq ft increase in living area yields different price premiums depending on the neighborhood, with Edwards showing the steepest slope.
+
+### 2. Quality and Size Dominate Predictive Power
+
+While living area is important, overall quality (OverallQual) and total square footage (TotalSF) emerged as the strongest predictors across all models. Neighborhood effects were significant, but grouping neighborhoods by median sale price improved model parsimony without sacrificing performance. The best predictive model explained over 91% of variance in sale prices.
+
+## Predictive Modeling
+
+Five competing multiple linear regression models were developed and rigorously evaluated using cross-validation and external validation via Kaggle submission:
+
+- **SLR**: SalePrice ~ GrLivArea (simple baseline)
+- **MLR1**: SalePrice ~ GrLivArea + FullBath (adding bathrooms)
+- **MLR2**: Full model with 25 predictors selected through EDA
+- **MLR3**: SalePrice ~ TotalSF + Neighborhood + OverallQual (parsimonious model)
+- **MLR3.N**: SalePrice ~ TotalSF + NeighborhoodGroup + OverallQual (with neighborhood grouping)
+
+All models underwent thorough diagnostics including residual analysis, normality checks, homoscedasticity, linearity, influential point analysis (Cook's Distance, leverage), and cross-validation (PRESS statistic).
+
+### Model Performance Comparison
+
+| Model | Adjusted R² | PRESS | CV RMSE (log) | AIC | Kaggle Score (RMSE) |
+|-------|-------------|-------|---------------|-----|---------------------|
+| SLR | 0.5256 | 111 | 0.1255 | 380.4 | 0.29893 |
+| MLR1 | 0.5574 | 103 | 0.1265 | 280.9 | 0.29090 |
+| MLR2 | 0.9167 | Inf | 0.1265 | -2053.9 | 0.16264 |
+| MLR3 | 0.8638 | 33 | 0.1260 | -1407.0 | 0.16416 |
+| MLR3.N | 0.8561 | 34 | 0.1265 | -1347.0 | 0.16663 |
+
+The MLR2 model achieved the best Kaggle performance with an RMSE of 0.16264 on the log-transformed sale prices, placing it competitively on the leaderboard.
+
+## Repository
+
+- `code/`: Complete analysis pipeline including `Data Cleaning.Rmd`, `analysis1_century21.rmd` (client-focused model), `analysis2_predictive.rmd` (predictive modeling), and utility scripts
+- `shiny_app/`: Interactive R Shiny application for exploring SalePrice vs GrLivArea by neighborhood
+- `data/`: Original Kaggle train/test CSV files, cleaned datasets, and submission files for each model
+- `reports/`: Comprehensive final project report (PDF) with appendices containing full code and detailed diagnostics
+
+All code is well-commented and reproducible. See the full [GitHub repo](https://github.com/PowellOnPoint/Housing-Prices-Regression) for the complete analysis pipeline and documentation.
+
+## Learn More
+
+- [Analysis 1](https://htmlpreview.github.io/?https://github.com/PowellOnPoint/Housing-Prices-Regression/blob/main/code/Analysis1_Century21_V2.html)
+- [Analysis 2](https://htmlpreview.github.io/?https://github.com/PowellOnPoint/Housing-Prices-Regression/blob/main/code/Analysis2_predictive.html)
+- [Kaggle Competition](https://www.kaggle.com/c/house-prices-advanced-regression-techniques)
+
+
+This project showcases advanced statistical modeling skills including multiple linear regression, interaction terms, model diagnostics, influential point analysis, cross-validation, and production of interactive data visualizations.

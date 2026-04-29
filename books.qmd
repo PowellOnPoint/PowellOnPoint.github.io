@@ -1,0 +1,69 @@
+---
+title: "Books"
+---
+
+Not all inclusive, but the ones you may want to read.
+
+## Currently Reading
+
+- **We Who Wrestle With God** by Jordan B. Peterson
+
+- **An Introduction to Statistical Learning** By James, Witten, Hastie, Tibshirani & Taylor.
+
+## Previously Read Book Reviews
+
+### STEM
+
+- **Learning Python: Powerful Object-Oriented Programming** by Mark Lutz   
+  When boot camps were not enough, this book filled in all the gaps, expanded my knowledge of object oriented programming, and opened the door to expert Python programming. Highly recommend reading linearly cover to cover for beginners and intermediate Python engineers. For Python 2.7 (or some Monte Python quotes) refer to the 5th edition, otherwise the 6th edition is more consolidated. 
+
+- **Doing Data Science** by Cathy O'Neil & Rachel Schutt   
+  Straight forward overview and lessons learned from Scientist in the field.
+
+- **Statistical Sleuth** by Fred L. Ramsey & Daniel W. Schafer (3rd Edition)   
+  Excellent for foundational understanding of statistics and scientific testing. All concepts are discussed with case studies with plenty of practice problems. From t-tests to linear and logistic regression, this book has the concept, example and math. 
+
+- **Reproducible Research  with R and RStudio** by Christopher Gandrud (3rd edition)   
+  Excellent introduction into concepts of reproducible research and methods such as knitting and Github. 
+
+### Finance 
+
+- **Investments** by Zvi Bodie, Alex Kane, and Alan J. Marcus (13th Edition)   
+  A comprehensive textbook on investment analysis, organized around fundamental principles consistent with the CFA Institute curriculum. Covers market efficiency, risk-return trade-offs, asset allocation, and derivative securities markets. Essential for understanding modern portfolio theory and investment strategies.
+
+- **Options, Futures, and Other Derivatives** by John C. Hull   
+  Known as “the bible” to business and economics professionals, Options, Futures, and Other Derivatives provides foundational and advanced knowledge of most pricing models, hedging methods, commodity valuation and even rate or index swaps. 
+
+- **Dividends Don't Lie** by Geraldine Weiss & **Dividends Still Don't Lie** by Kelley Wright, Ann Richardson, et al.   
+  Highly recommend for anyone wanting a simple and straightforward strategy to generating wealth in the markets. 
+
+### Geopolitical and Military History
+
+- **Beirut Rules** by Fred Burton & Samuel M. Katz   
+  Required reading for anyone interested in discussing Hezbollah, Lebanon's culture and threat networks in the Middle East.
+
+- **Battlegrounds** By H.R. McMaster   
+  Thank you, General, for providing a well documented and factual outline of threat knowledge cultivated over your career. 
+
+- **For the Common Defense** A Military History of the United States from 1607 to 2012 by Allan R. Millett, Peter Maslowski, and William B. Feis (3rd Edition)   
+  The encyclopedia for every battle relevant to the United States. Fair warning, reading this turns you into a staunch critic of every military movie made except Band of Brothers. 
+
+- **Russia and the West under Lenin and Stalin** By George F Kennan   
+  One of President's Truman's wisemen published this collection of oxford lectures and notes. Provides an excellent understanding of Soviet history from American perspective. 
+
+- **In Peace and War** edited by Kenneth J. Hagan (30th Anniversary Edition)   
+  For a chronological experience of America's naval development from every battles to technology advancement. 
+
+- **Decision at Sea** by Craig L. Symonds   
+  A more entertaining perspective of American naval lessons. 
+
+- **Killing Lincoln** By Bill O'Reilly & Martin Dugard   
+  Thrilling perspective with grand rendition of the events leading to, during and after Abraham Lincoln's assassination. 
+
+### Philosophy and Personal Development
+
+- **Extreme Ownership** By Jocko Willik    
+  Almost every military officer worth their salt knows the lessons in this book with applications well beyond military leadership.
+
+- **The Survivors Club** by Ben Sherwood   
+  Well deserved acknowledgement for helping motiviate myself during late teenage years. 

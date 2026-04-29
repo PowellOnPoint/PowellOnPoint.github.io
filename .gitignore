@@ -1,0 +1,41 @@
+_site
+.bundle
+.DS_store
+.idea
+.jekyll-cache
+.jekyll-metadata
+.ruby-version
+.sass-cache
+.tweet-cache
+.venv
+assets/libs/
+assets/rendercv/rendercv_output/*.typ
+Gemfile.lock
+node_modules/
+vendor
+
+# Large media and video files - this prevents future bloat (e.g. the 6.9GB attrition.mov that caused slow git syncs/pulls taking >10min)
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.MOV
+*.wmv
+
+# Quarto, Jupyter, Python caches and checkpoints
+.ipynb_checkpoints/
+__pycache__/
+*.qmd.cache
+*.ipynb
+
+# Generated content from Quarto builds (excluded to keep repo size manageable)
+_freeze/
+docs/
+projects/*.{pdf,large-data}
+
+# Git backup of old bloated history
+.git.bak/
+
+# macOS desktop services store files
+**/.DS_Store
+.DS_Store

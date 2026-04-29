@@ -1,0 +1,46 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Aaron Powell"
+  description: "Data Science Portfolio & Projects"
+  site-url: https://powellonpoint.github.io
+  repo-url: https://github.com/powellonpoint/powellonpoint.github.io
+  navbar:
+    background: dark
+    left:
+      - href: index.qmd
+        text: Home
+      - href: projects.qmd
+        text: Projects
+      - href: books.qmd
+        text: Books
+      - href: research.qmd
+        text: Research
+    right:
+      - icon: github
+        href: https://github.com/powellonpoint
+      - icon: linkedin
+        href: https://linkedin.com/in/aaronpowell
+      - icon: twitter
+        href: https://x.com/powellonpoint
+
+format:
+  html:
+    theme: spacelab
+    toc: true
+    grid:
+      sidebar-width: 250px
+      body-width: 900px
+      margin-width: 150px
+    code-copy: true
+    code-overflow: wrap
+
+bibliography: references.bib
+
+execute:
+  freeze: auto
+
+
+

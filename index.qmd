@@ -1,0 +1,21 @@
+---
+title: "Aaron Powell"
+subtitle: "Intelligence Manager & Derivatives Expert"
+image: images/prof_pic.jpg
+about:
+  template: trestles
+  links:
+    - icon: github
+      text: GitHub
+      href: https://github.com/powellonpoint
+    - icon: twitter
+      text: X (Formerly Twitter)
+      href: https://x.com/powellonpoint
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/aaronpowell2
+---
+
+Intelligence Manager with 15 years experience providing strategic planning and problem solving. Investment Broker with 10 years experience in deriviates trading and portfolio management.
+
+In the quiet architecture of human potential, the Learner devours knowledge with insatiable curiosity, while the Strategic mind charts the most elegant paths through complexity, turning obstacles into calculated victories. Guided by unshakeable Self-Assurance and the relentless drive of the Achiever, these talents are anchored by a profound sense of Responsibility—the quiet guardian that ensures every insight, every plan, and every ambition serves something greater than the self.

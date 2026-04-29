@@ -1,0 +1,13 @@
+---
+title: "Projects"
+listing:
+  contents: projects/*.qmd
+  type: grid
+  sort: "date desc"
+  categories: true
+  sort-ui: true
+  filter-ui: true
+  fields: [image, title, subtitle, description, categories]
+---
+
+Browse interactive reports, analyses, and visualizations. 
