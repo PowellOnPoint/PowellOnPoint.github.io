@@ -13,7 +13,7 @@ about:
       href: https://x.com/powellonpoint
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com/in/aaronpowell2
+      href: https://linkedin.com/in/aaronmpowell2
 ---
 
 Intelligence Manager with 15 years experience providing strategic planning and problem solving. Investment Broker with 10 years experience in deriviates trading and portfolio management.
