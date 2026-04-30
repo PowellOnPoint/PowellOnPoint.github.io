@@ -19,12 +19,14 @@ website:
       - href: research.qmd
         text: Research
     right:
-      - icon: github
+      - text: '<img src="images/icons/github.svg" style="height:24px; horizontal-align: middle;">'
         href: https://github.com/powellonpoint
-      - icon: linkedin
-        href: https://linkedin.com/in/aaronpowell
-      - icon: twitter
+      - text: '<img src="images/icons/linkedin.svg" style="height:24px; horizontal-align: middle;">'
+        href: https://linkedin.com/in/aaronmpowell2
+      - text: '<img src="images/icons/x-custom.svg" style="height:24px; horizontal-align: middle;">'
         href: https://x.com/powellonpoint
+      - text: '<img src="images/icons/cif--us.svg" style="height:22px; vertical-align: middle;">'
+        href: army.html
 
 format:
   html:

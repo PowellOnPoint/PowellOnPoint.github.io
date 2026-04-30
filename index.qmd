@@ -8,12 +8,11 @@ about:
     - icon: github
       text: GitHub
       href: https://github.com/powellonpoint
-    - icon: twitter
-      text: X (Formerly Twitter)
+    - text: '<img src="images/icons/x-custom.svg" style="height:14px; vertical-align: middle;"> (Formerly Twitter)'
       href: https://x.com/powellonpoint
     - icon: linkedin
-      text: LinkedIn
-      href: https://linkedin.com/in/aaronmpowell2
+      text: Linkedin
+      href: https://www.linkedin.com/in/aaronmpowell2/
 ---
 
 Intelligence Manager with 15 years experience providing strategic planning and problem solving. Investment Broker with 10 years experience in deriviates trading and portfolio management.
