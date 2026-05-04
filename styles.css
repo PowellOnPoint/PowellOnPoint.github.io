@@ -1,15 +1,21 @@
 /* css styles */
 
-/* Responsive layout for wider screens */
+/* Full-width layout for all devices */
+.quarto-container {
+  max-width: none !important;
+  width: 100%;
+}
+
+/* Responsive layout for wider screens - overridden above */
 @media (min-width: 1200px) {
   .quarto-container {
-    max-width: 1200px !important;
+    max-width: none !important;
   }
 }
 
 @media (min-width: 1400px) {
   .quarto-container {
-    max-width: 1400px !important;
+    max-width: none !important;
   }
 }
 
