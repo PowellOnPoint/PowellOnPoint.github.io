@@ -1,0 +1,278 @@
+---
+title: "Central Limit Theorem and Data Visualization study"
+author: "Aaron Powell"
+date: "2026-01-05"
+description: "Experimenting with R"
+categories: ["R", "Visuals", "EDA", "Theory"]
+image: ../images/clt.png
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    toc-depth: 3
+    code-tools: true
+    fig-cap-location: margin
+
+execute:
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r dependencies, include=FALSE}
+library(tidyverse)
+```
+
+## Data Visualization with PlayerBBall.csv
+
+```{r load data, echo=TRUE}
+player_data <- read.csv("PlayersBBall.csv")
+glimpse(player_data)
+```
+
+#### Use the PlayerBBall.csv dataset to visually represent (summarize) the number of players in each position.
+
+```{r players by position, echo=TRUE}
+ggplot(player_data, aes(x = position)) + # May fct_recode(position, "C" = "Center"...)
+  geom_bar(fill = "skyblue") +
+  labs(title = "Number of Players by Position", x = "Position", y = "Count") +
+  theme_bw()
+```
+
+This baysian theme chart reveals a possible empty cell. Viewing the Data Table reveals one observation with an empty value. Let's create a copy of the data table without empty cells for further analysis and fix the bar chart.
+
+```{r filter empty position, echo=TRUE}
+player_data <- player_data %>% filter(position != "")
+ggplot(player_data, aes(x = position)) + # May fct_recode(position, "C" = "Center"...)
+  geom_bar(fill = "skyblue") +
+  labs(title = "Number of Players by Position", x = "Position", y = "Count") +
+  theme_bw()
+```
+
+#### Use the dataset to visually investigate the distribution of the weight of centers (C) is greater than the distribution of the weight of forwards (F).
+
+```{r weight distribution centers vs forwards, echo=TRUE}
+ggplot(player_data %>% filter(position %in% c("C", "F")), aes(x = weight, fill = position)) +
+  geom_density(alpha = 0.5) + # alpha to help with overlapping areas
+  labs(title = "Weight Distribution: Centers vs Forwards", x = "Weight", y = "Density") +
+  theme_bw()
+```
+
+For the scope of this exercise, we'll disregard the warnings about null values. The density plot suggests that centers (C) generally have a higher weight distribution compared to forwards (F), as the density curve for centers is shifted to the right of the curve for forwards. This indicates that centers tend to be heavier than forwards on average.
+
+#### Use the dataset to visually investigate if the distribution of the height of centers (C) is greater than the distribution of the height of forwards (F).
+
+```{r height distribution centers vs forwards, echo=TRUE}
+ggplot(player_data %>% filter(position %in% c("C", "F")), aes(x = height, fill = position)) + # str data probably not going to look good. 
+  geom_density(alpha = 0.5) +
+  labs(title = "Weight Distribution: Centers vs Forwards", x = 'Height', y = "Density") +
+  theme_bw()
+```
+
+Not a great visual, not to mention several warning messages. This is due to the height data being stored as strings. Let's convert the height data to an integer.
+
+```{r convert height to numeric, echo=TRUE}
+player_data <- player_data %>%
+  mutate(height_inches = as.numeric(str_split_fixed(height, "-", 2)[,1]) * 12 + # Copilot is suggestion numeric...  
+                        as.numeric(str_split_fixed(height, "-", 2)[,2]))
+```
+
+Discovered the numeric datatype in R is the default for decimal numbers and is also referred to as "double". This appears to be equivelant to the floating point datatype in Python.
+
+Now let's re-create the height distribution plot for centers vs forwards.
+
+```{r height distribution centers vs forwards numeric, echo=TRUE}
+ggplot(player_data %>% filter(position %in% c("C", "F")), aes(x = height_inches, fill = position)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Height Distribution: Centers vs Forwards", x = 'Height (inches)', y = "Density") +
+  theme_bw()
+```
+
+#### Use the dataset to visually investigate if the distribution of height is different between any of the positions.
+
+```{r height distribution by position, echo=TRUE}
+ggplot(player_data, aes(x = height_inches, fill = position)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Height Distribution by Position", x = 'Height (inches)', y = "Density") +
+  theme_bw()
+```
+
+#### Use the dataset to investigate how the player’s height is related to the player’s weight. How does height change as the weight changes?
+
+```{r height vs weight, echo=TRUE}
+ggplot(player_data, aes(x = weight, y = height_inches, color = position)) +
+  geom_smooth(alpha = .5) + # alpha to help show overlap and clustering
+  labs(title = "Height vs Weight", x = "Weight", y = "Height (inches)") +
+  theme_bw()  # Would add a correlation factor here, but may be out of scope for this lesson.
+```
+
+#### Is their any difference in the relationship between height and weight between positions? Are height and weight related differently for different positions.
+
+There is a positive correlation between height and weight for all positions, but the strength of this correlation varies. Centers (C) tend to be taller and heavier, while guards (G) are generally shorter and lighter. Forwards (F) fall in between these two extremes. This suggests that different positions have different physical requirements, which is reflected in the height-weight relationship.
+
+#### A historian would like to investigate the claim that the heights of players have increased over the years. Analyze this claim graphically / visually. Create a 3D plot of height vs. weight vs. year and color code the points by position.
+
+Prepping the data for a cleaner visual. 
+Interpolate the year as the midpoint between year_start and year_end.
+Use a ratio of height to weight to remove clutter of two variables.
+```{r add midpoint year, echo=TRUE}
+player_data <- player_data %>%
+  mutate(year_mid = (year_start + year_end) / 2)
+player_data <- player_data %>%
+  mutate(hw_ratio = (height_inches / weight))
+
+```
+
+```{r height vs year, echo=TRUE}
+ggplot(player_data, aes(x =year_mid, y = height_inches)) +
+  geom_smooth(alpha = .5) +
+  labs(title = "Height vs Year", x = "Mid Career (Year)", y = "Height") +
+  theme_bw()
+```
+There is enough of a trend to support the historian's claim that player heights have increased over the years.
+
+```{r height vs weight vs year, echo=TRUE}
+library(plotly)
+fig <- plot_ly(player_data, x = ~weight, y = ~height_inches, z = ~year_end, color = ~position) %>%
+  add_markers() %>%
+  layout(title = "Height vs Weight vs Year",
+         scene = list(xaxis = list(title = 'Weight'),
+                      yaxis = list(title = 'Height (inches)'),
+                      zaxis = list(title = 'Year')))
+
+fig
+```
+Not a big fan of the 3D plot. Too much going on. Thinking about using a ratio of height to weight instead of both variables.
+
+#### Go to this website and use one of the 50 best plots to visualize some aspect of the data and provide at least one insight. You will present your work in breakout! http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+
+I have decided to quit my job and be a full time QUILT MAKER!
+```{r NBA Quilt take 1, echo=TRUE}
+# Now we'll need to clean and process some data for a quilt plot.
+# Need to simplify positions for my first quilt.
+player_data <- player_data %>%
+  mutate(
+    # Simplify positions (e.g., "F-C" -> "F", keep main ones: C, F, G)
+    position_simple = str_extract(position, "^[CFG]"),  # Extract first letter: C, F, G
+    # Create decade from year_start
+    decade = floor(year_start / 10) * 10
+  ) %>%
+  filter(!is.na(position_simple), !is.na(decade), !is.na(height_inches), !is.na(weight))  # Drop invalid
+
+# Need to gather my textures (data) for the quilt. Copilot need to help me group and order.
+# Summarize: Count players per position per decade
+quilt_summary <- player_data %>%
+  group_by(decade, position_simple) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  # For each decade, rank positions by count (descending)
+  group_by(decade) %>%
+  arrange(decade, desc(count)) %>% # change to asc(mean_height) for height based ranking
+  mutate(rank = row_number()) %>% 
+  ungroup()
+
+# Now to pickout my colors for the quilt.
+positions <- unique(quilt_summary$position_simple)
+position_colors <- setNames(rainbow(length(positions)), positions)  # Or use scale_fill_manual with custom colors
+
+# Now to start sewing! 
+ggplot(quilt_summary, aes(x = as.factor(decade), y = -rank, fill = position_simple)) +  # y = -rank to have best (rank 1) at top
+  geom_tile(color = "white", linewidth = 0.5) +  # Tiles for background color
+  geom_text(aes(label = paste(position_simple, "\n", count)), color = "black", size = 3) +  # Text: Position + count
+  scale_fill_manual(values = position_colors) +  # Unique colors per position
+  scale_y_continuous(breaks = -max(quilt_summary$rank): -1, labels = max(quilt_summary$rank):1) +  # Reverse y for top=best
+  labs(
+    title = "NBA Positions Quilt",
+    subtitle = "Inspired by finance performance quilts",
+    x = "Decade (based on year_start)",
+    y = "Rank (Most Players at Top)",
+    fill = "Position"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.y = element_text(size = 10)
+  )
+```
+
+```{r NBA Quilt Take 2, echo=TRUE}
+# Now we'll need to clean and process some data for a quilt plot.
+# Need to simplify positions for my first quilt.
+player_data <- player_data %>%
+  mutate(
+    # Simplify positions (e.g., "F-C" -> "F", keep main ones: C, F, G)
+    #position_simple = str_extract(position, "^[CFG]"),  # Extract first letter: C, F, G
+    # Create decade from year_start
+    decade = floor(year_end / 10) * 10
+  ) %>%
+  filter(!is.na(position), !is.na(decade), !is.na(height_inches), !is.na(weight))  # Drop invalid
+
+# Need to see what textures (data) I have for the quilt. Copilot need to help me group and order.
+# Summarize: Count players per position per decade
+quilt_summary <- player_data %>%
+  group_by(decade, position) %>%
+  summarise(
+    mean_height = mean(height_inches, na.rm = TRUE),
+    mean_weight = mean(weight, na.rm = TRUE),
+    count = n(), .groups = "drop") %>%
+  # For each decade, rank positions by mean_height descending
+  group_by(decade) %>% # Layout all the textures I want to use.
+  arrange(decade, desc(mean_height)) %>% # change to asc(mean_height) for height based ranking
+  mutate(rank = row_number()) %>% # maybe I can put mean weight colors here
+  ungroup()
+
+# Pick out the threads and needles.
+# positions <- unique(quilt_summary$position_simple)
+# position_colors <- setNames(rainbow(length(positions)), positions)  # Or use scale_fill_manual with custom colors
+
+# Now to start sewing! 
+ggplot(quilt_summary, aes(x = as.factor(decade), y = -rank, fill = mean_weight)) +  # y = -rank to have best (rank 1) at top
+  geom_tile(color = "white", linewidth = 0.5) +  # Tiles for background color
+  geom_text(aes(label = position), color = "black", size = 3) +  # Text: Position + count
+  scale_fill_viridis_c(option = "plasma", name = "Mean Weight (lbs)") +  # Gradient for weight
+  scale_y_continuous(breaks = -max(quilt_summary$rank): -1, labels = max(quilt_summary$rank):1) +  # Reverse y for top=best
+  labs(
+    title = "NBA Positions Quilt",
+    subtitle = "Inspired by finance performance quilts",
+    x = "Decade (based on year_end)",
+    y = "Rank (Tallest Avg Height at Top)",
+    fill = "Mean Weight (lbs)"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10)  # Angle x labels for legibility
+  )
+```
+
+## Separate dataset:  The EducationIncome.csv dataset has incomes of randomly selected Americans and their level of education.  (1-2 hours)
+#### Visually test the claim that the distribution of incomes increase (mean or median) as the education level rises. 
+```{r load education income data, echo=TRUE}
+edu_income_data <- read.csv("Education_Income.csv")
+glimpse(edu_income_data)
+```
+
+Educ appears to be categorical. 
+<12 - Less than High School
+12 - High School
+13-15 - Some College
+16 - Bachelor's
+>16 - Graduate Degree or higher
+
+
+```{r income by education level, echo=TRUE}
+ggplot(edu_income_data, 
+  aes(
+    x = factor(Educ, levels = c("<12", "12", "13-15", "16", ">16")), # Ordering the x axis
+    y = Income2005
+  )
+)+
+geom_boxplot(fill = "lightgreen", outlier.shape = NA) + # Green for money
+labs(title = "Income by Education Level", x = "Education Level", y = "Income") +
+scale_y_continuous(labels = scales::label_number()) + # smoothing outliers
+coord_cartesian(ylim = c(0, 200000)) + # Zoom in to better see distribution
+theme_bw()
+```
+
+There is sufficient evidence to support an increase in income as education level rises.
