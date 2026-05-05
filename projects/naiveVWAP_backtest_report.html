@@ -199,9 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This notebook analyzes the trades exported from the NaiveVWAP algorithm backtest in <code>naiveVWAP.csv</code>. The CSV contains per-trade details including Entry/Exit times, prices, P&amp;L, fees, MAE/MFE, per-trade Drawdown, win/loss flag, etc. We compute equity curve, key performance metrics, and visualizations for a complete report.</p>
-<p><strong>Note</strong>: Starting capital assumed ~$100,000 based on the algorithm.</p>
-<div id="76b7098b" class="cell">
+<div id="46c4dc67" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">---</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>title: <span class="st">"Naive VWAP model"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>author: <span class="st">"Aaron Powell"</span></span>
@@ -224,6 +222,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  freeze: auto</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="op">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>This notebook analyzes the trades exported from the NaiveVWAP algorithm backtest in <code>naiveVWAP.csv</code>. The CSV contains per-trade details including Entry/Exit times, prices, P&amp;L, fees, MAE/MFE, per-trade Drawdown, win/loss flag, etc. We compute equity curve, key performance metrics, and visualizations for a complete report.</p>
+<p><strong>Note</strong>: Starting capital assumed ~$100,000 based on the algorithm.</p>
 <div id="1b43760b" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Section 1: Import Required Libraries</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
