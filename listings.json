@@ -2,6 +2,7 @@
   {
     "listing": "/projects.html",
     "items": [
+      "/projects/naiveVWAP_backtest_report.html",
       "/projects/taxi-tips.html",
       "/projects/housing-prices.html",
       "/projects/attrition.html",
