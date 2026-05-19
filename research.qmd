@@ -1,6 +1,10 @@
 ---
 title: "Research"
-bibliography: references.bib
+listing:
+  contents: research/*.{qmd,ipynb}
+  type: default
+  categories: true
+  sort-ui: true
+  filter-ui: true
+  fields: [image, date, title, author, categories, description, reading-time]
 ---
-
-Under construction
