@@ -8,5 +8,11 @@
       "/projects/attrition.html",
       "/projects/clt.html"
     ]
+  },
+  {
+    "listing": "/research.html",
+    "items": [
+      "/research/myFirstClass.html"
+    ]
   }
 ]
