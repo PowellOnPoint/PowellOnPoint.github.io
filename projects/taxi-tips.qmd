@@ -24,12 +24,16 @@ execute:
 
 ::: {.grid}
 
-::: {.g-col-6}
+::: {.g-col-1}
 [![](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/PowellOnPoint/NYC-Yellow-Taxi-Tips)
 :::
 
-::: {.g-col-6}
+::: {.g-col-3}
 [![](https://img.shields.io/badge/Live-Shiny%20Dashboard-green?logo=shiny)](https://powellonpoint.shinyapps.io/taxi-tips/)
+:::
+
+::: {.g-col-4}
+[![](https://img.shields.io/badge/-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/vNmSwUVAcMs)
 :::
 
 :::
