@@ -10,6 +10,8 @@ Not all inclusive, but the ones you may want to read.
 
 - **An Introduction to Statistical Learning** By James, Witten, Hastie, Tibshirani & Taylor.
 
+- **Database System Concepts** by Silberschatz, Korth, Sudarshan.
+
 ## Previously Read Book Reviews
 
 ### STEM
