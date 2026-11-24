@@ -214,7 +214,35 @@
     "href": "research.html",
     "title": "Research",
     "section": "",
-    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMy First Class\n\n\n\nPython\n\nNotes\n\n\n\nObject Oriented Programming big picture and examples.\n\n\n\n\n\nNov 18, 2025\n\n\nAaron Powell\n\n5 min\n\n\n\n\nNo matching items"
+    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nFrom Configuration Files to a Warehouse\n\n\n\nMySQL\n\nDatabase\n\nTrading\n\nPOINT\n\n\n\nA database model for algorithmic trading systems: dated universes, price provenance, idempotent orders, and an implied-cash ledger.\n\n\n\n\n\nNov 24, 2026\n\n\nAaron Powell\n\n2 min\n\n\n\n\n\n\n\n\n\n\n\nMy First Class\n\n\n\nPython\n\nNotes\n\n\n\nObject Oriented Programming big picture and examples.\n\n\n\n\n\nNov 18, 2025\n\n\nAaron Powell\n\n5 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "research/point-warehouse.html",
+    "href": "research/point-warehouse.html",
+    "title": "From Configuration Files to a Warehouse",
+    "section": "",
+    "text": "Course paper and presentation for DS 7330, File Organization and Database Management, Fall 2026. Master of Science in Data Science, Southern Methodist University."
+  },
+  {
+    "objectID": "research/point-warehouse.html#presentation",
+    "href": "research/point-warehouse.html#presentation",
+    "title": "From Configuration Files to a Warehouse",
+    "section": "1 Presentation",
+    "text": "1 Presentation\nSelect a slide to enlarge it. Download the PowerPoint."
+  },
+  {
+    "objectID": "research/point-warehouse.html#full-text",
+    "href": "research/point-warehouse.html#full-text",
+    "title": "From Configuration Files to a Warehouse",
+    "section": "2 Full Text",
+    "text": "2 Full Text\n\nDownload the PDF."
+  },
+  {
+    "objectID": "research/point-warehouse.html#citation",
+    "href": "research/point-warehouse.html#citation",
+    "title": "From Configuration Files to a Warehouse",
+    "section": "3 Citation",
+    "text": "3 Citation\n(Powell 2026)"
   },
   {
     "objectID": "research/myFirstClass.html",
