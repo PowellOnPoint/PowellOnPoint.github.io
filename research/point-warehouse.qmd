@@ -1,0 +1,55 @@
+---
+title: "From Configuration Files to a Warehouse"
+subtitle: "Universe Resolution, Order Tracking, and Implied Cash in POINT"
+author: "Aaron Powell"
+date: "2026-11-24"
+description: "A database model for algorithmic trading systems: dated universes, price provenance, idempotent orders, and an implied-cash ledger."
+categories: ["MySQL", "Database", "Trading", "POINT"]
+image: slides/slide-01.png
+resources:
+  - slides
+  - point-warehouse.pdf
+  - point-warehouse.pptx
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    toc-depth: 2
+    lightbox: true
+---
+
+Course paper and presentation for DS 7330, File Organization and Database Management, Fall 2026. Master of Science in Data Science, Southern Methodist University.
+
+[![](https://img.shields.io/badge/Paper-PDF-blue)](point-warehouse.pdf)
+[![](https://img.shields.io/badge/Slides-PowerPoint-orange)](point-warehouse.pptx)
+
+## Presentation
+
+Select a slide to enlarge it. [Download the PowerPoint](point-warehouse.pptx).
+
+```{=html}
+<a href="slides/slide-01.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-01.png" class="img-fluid" alt="Title slide. From Configuration Files to a Warehouse. Designing a reliable database for POINT, an automated stock-picking program. Aaron Powell, M.S. in Data Science, Southern Methodist University. DS 7330, Fall 2026." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-02.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-02.png" class="img-fluid" alt="What is POINT? Gather data, pick a ranked menu of stocks, send orders to a broker, and check cash from completed trades." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-03.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-03.png" class="img-fluid" alt="Why loose files failed in one month. Overwritten lists, disconnected logs, and no unique keys, against the need for history, locked receipts, and safe retries." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-04.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-04.png" class="img-fluid" alt="Baseline on October 2, 2026. 36 automated runs, 261 completed trades, 56 rejected orders, and 5 still waiting, with no unique keys." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-05.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-05.png" class="img-fluid" alt="Four rules: dated universe snapshots, locked price receipts, a single order id, and cash calculated from starting funds plus completed trades." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-06.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-06.png" class="img-fluid" alt="Two databases. Production has 8 tables and 3 views for live trading. The test sandbox has 5 tables and 1 cash view for the proof." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-07.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-07.png" class="img-fluid" alt="Cash view. Current cash equals starting cash minus purchases plus sales. Account A1 on October 2: 95,000 dollars start, plus 2,040 dollars sold, minus 4,575 dollars bought, equals 92,465 dollars." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-08.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-08.png" class="img-fluid" alt="Test results. Every session balanced to the penny across two accounts and 17 orders over four trading days." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-09.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-09.png" class="img-fluid" alt="Integrity tests. Calculation error was zero. Changing a close to 480 dollars left the 510 dollar receipts intact. Reloaded orders updated status without overwriting prices." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-10.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-10.png" class="img-fluid" alt="Next steps: deploy the cash rules to live POINT, support streaming sessions, and add dividends, fees, wash sales, and formal statements." style="margin-bottom:1rem;"></a>
+<a href="slides/slide-11.png" class="lightbox" data-gallery="point-slides"><img src="slides/slide-11.png" class="img-fluid" alt="Summary. Reliable keys turn fragile trade logs into an auditable ledger. Questions and a live MySQL demonstration. Aaron Powell." style="margin-bottom:1rem;"></a>
+```
+
+## Full Text
+
+```{=html}
+<iframe src="point-warehouse.pdf" title="From Configuration Files to a Warehouse" width="100%" height="900" style="border:1px solid #dee2e6;"></iframe>
+```
+
+[Download the PDF](point-warehouse.pdf).
+
+## Citation
+
+[@powell2026point]

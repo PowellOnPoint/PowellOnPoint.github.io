@@ -3,6 +3,7 @@ title: "Research"
 listing:
   contents: research/*.{qmd,ipynb}
   type: default
+  sort: "date desc"
   categories: true
   sort-ui: true
   filter-ui: true
